@@ -189,16 +189,16 @@ const tripDays = [
 ];
 
 const hotels = [
-  { date: "6月1日", city: "喀什", name: "喀什全季酒店（古城商业街店）", nights: "1晚" },
-  { date: "6月2日", city: "塔县", name: "塔县格美酒店", nights: "1晚" },
-  { date: "6月3日", city: "塔县", name: "塔县格美酒店", nights: "1晚" },
-  { date: "6月4日", city: "喀什", name: "喀什格林东方（古城）", nights: "1晚" },
-  { date: "6月5日", city: "伊宁", name: "伊宁云端酒店", nights: "1晚" },
-  { date: "6月6日", city: "伊宁", name: "伊宁云端酒店", nights: "1晚" },
-  { date: "6月7日", city: "特克斯", name: "特克斯慢途民宿", nights: "1晚" },
-  { date: "6月8日", city: "那拉提", name: "十二时节民宿", nights: "1晚" },
-  { date: "6月9日", city: "那拉提", name: "十二时节民宿", nights: "1晚" },
-  { date: "6月10日", city: "乌鲁木齐", name: "乌市丽呈花盛", nights: "1晚" }
+  { date: "6月1日", city: "喀什", name: "喀什全季酒店（古城商业街店）", address: "喀什市解放北路艾提尕尔广场西侧", nights: "1晚" },
+  { date: "6月2日", city: "塔县", name: "塔县格美酒店", address: "塔什库尔干县红其拉甫路48号", nights: "1晚" },
+  { date: "6月3日", city: "塔县", name: "塔县格美酒店", address: "塔什库尔干县红其拉甫路48号", nights: "1晚" },
+  { date: "6月4日", city: "喀什", name: "喀什格林东方（古城）", address: "喀什市人民东路8号，古城东门对面", nights: "1晚" },
+  { date: "6月5日", city: "伊宁", name: "伊宁云端酒店", address: "伊宁市解放西路229号", nights: "1晚" },
+  { date: "6月6日", city: "伊宁", name: "伊宁云端酒店", address: "伊宁市解放西路229号", nights: "1晚" },
+  { date: "6月7日", city: "特克斯", name: "特克斯慢途民宿", address: "特克斯县八卦城博斯坦街15号", nights: "1晚" },
+  { date: "6月8日", city: "那拉提", name: "十二时节民宿", address: "新源县那拉提镇天马西街32号", nights: "1晚" },
+  { date: "6月9日", city: "那拉提", name: "十二时节民宿", address: "新源县那拉提镇天马西街32号", nights: "1晚" },
+  { date: "6月10日", city: "乌鲁木齐", name: "乌市丽呈花盛", address: "乌鲁木齐市沙依巴克区友好北路89号", nights: "1晚" }
 ];
 
 const foodRecommendations = [
@@ -207,8 +207,8 @@ const foodRecommendations = [
     city: "喀什",
     note: "抵达日按到达时间选择，晚餐可以稍微有仪式感。",
     lunch: [
-      { name: "纺织厂古城烤包子", address: "喀什古城周边，可导航店名", dishes: "牛肉烤包子、酸奶", price: "约15-30元/人" },
-      { name: "喀什美食一条街", address: "喀什古城美食街区域", dishes: "干煸炒面、烤肉、石榴汁", price: "约25-50元/人" }
+      { name: "纺织厂古城烤包子", address: "喀什市亚瓦格路纺织厂家属院对面，古城北门步行约5分钟", dishes: "牛肉烤包子、酸奶", price: "约15-30元/人" },
+      { name: "喀什美食一条街", address: "喀什市人民东路与解放北路交叉口，古城东门附近", dishes: "干煸炒面、烤肉、石榴汁", price: "约25-50元/人" }
     ],
     dinner: [
       { name: "诺澜美食", address: "喀什市解放北路18号，老新华书店旁", dishes: "架子肉、烤鸽子、薄皮包子", price: "约80-120元/人" },
@@ -220,8 +220,8 @@ const foodRecommendations = [
     city: "喀什-塔县",
     note: "这天车程长，午饭以顺路快吃为主，晚饭建议热汤锅。",
     lunch: [
-      { name: "白沙湖游客服务区简餐", address: "G314白沙湖景区服务区一带", dishes: "拌面、抓饭、热汤", price: "约30-60元/人" },
-      { name: "喀拉库勒湖沿线毡房餐食", address: "喀拉库勒湖景区沿线", dishes: "羊肉汤、抓饭、奶茶", price: "约40-80元/人" }
+      { name: "白沙湖游客服务区简餐", address: "G314国道白沙湖景区北岸游客服务中心", dishes: "拌面、抓饭、热汤", price: "约30-60元/人" },
+      { name: "喀拉库勒湖沿线毡房餐食", address: "G314国道喀拉库勒湖观景台附近毡房区", dishes: "羊肉汤、抓饭、奶茶", price: "约40-80元/人" }
     ],
     dinner: [
       { name: "塔县雷记高原牦牛骨汤锅馆", address: "塔什库尔干县库尔干路009号", dishes: "牦牛骨汤锅、牦牛肉、素菜拼盘", price: "约60-90元/人" },
@@ -234,10 +234,10 @@ const foodRecommendations = [
     note: "景点密集，午饭别太重，晚饭补主食和热量。",
     lunch: [
       { name: "寻羊品味餐厅", address: "塔什库尔干县奇石广场旅游产品商业街152/022号", dishes: "羊肉抓饭、烤肉、拌面", price: "约50-80元/人" },
-      { name: "火炬快餐厅", address: "塔什库尔干县城内，可导航店名", dishes: "炒菜、拉面、烤肉", price: "约35-60元/人" }
+      { name: "火炬快餐厅", address: "塔什库尔干县塔什库尔干路与帕米尔路交叉口，可导航店名", dishes: "炒菜、拉面、烤肉", price: "约35-60元/人" }
     ],
     dinner: [
-      { name: "冰山来客塔吉克美食餐厅", address: "塔什库尔干县城内，可导航店名", dishes: "牦牛肉火锅、塔吉克风味热菜", price: "约80-120元/人" },
+      { name: "冰山来客塔吉克美食餐厅", address: "塔什库尔干县红其拉甫路中段，可导航店名", dishes: "牦牛肉火锅、塔吉克风味热菜", price: "约80-120元/人" },
       { name: "塔县伊犁回民餐厅", address: "塔县慕士塔格路分店", dishes: "拌面、炒菜、丸子汤", price: "约40-70元/人" }
     ]
   },
@@ -246,8 +246,8 @@ const foodRecommendations = [
     city: "塔县-喀什",
     note: "返程日午饭顺路简单吃，回喀什后再好好吃。",
     lunch: [
-      { name: "喀拉库勒湖沿线简餐", address: "喀拉库勒湖景区沿线", dishes: "抓饭、拌面、奶茶", price: "约35-70元/人" },
-      { name: "奥依塔克景区周边餐点", address: "奥依塔克红山/冰川公园周边", dishes: "拌面、烤肉、热汤", price: "约35-70元/人" }
+      { name: "喀拉库勒湖沿线简餐", address: "G314国道喀拉库勒湖观景台附近服务点", dishes: "抓饭、拌面、奶茶", price: "约35-70元/人" },
+      { name: "奥依塔克景区周边餐点", address: "G314国道奥依塔克红山景区入口周边", dishes: "拌面、烤肉、热汤", price: "约35-70元/人" }
     ],
     dinner: [
       { name: "马氏案板牛蹄（喀什总店）", address: "喀什市吐曼路6号B1楼121-124号，你好酒店右侧", dishes: "案板牛蹄、野蘑菇烧鸡", price: "约50-80元/人" },
@@ -272,11 +272,11 @@ const foodRecommendations = [
     city: "伊宁-赛里木湖",
     note: "赛湖风大，午饭热一点；回伊宁可以加甜品。",
     lunch: [
-      { name: "赛里木湖景区游客中心餐厅", address: "赛里木湖景区游客中心", dishes: "拌面、抓饭、热汤", price: "约40-80元/人" },
-      { name: "果子沟沿线餐厅", address: "果子沟大桥沿线服务点", dishes: "烤肉、丸子汤、拌面", price: "约40-80元/人" }
+      { name: "赛里木湖景区游客中心餐厅", address: "赛里木湖景区东门游客中心二楼", dishes: "拌面、抓饭、热汤", price: "约40-80元/人" },
+      { name: "果子沟沿线餐厅", address: "果子沟大桥观景台附近服务点", dishes: "烤肉、丸子汤、拌面", price: "约40-80元/人" }
     ],
     dinner: [
-      { name: "古兰丹姆冰淇淋", address: "伊宁市斯大林街三巷一带，可导航就近分店", dishes: "手工冰淇淋、酸奶、夹沙", price: "约15-35元/人" },
+      { name: "古兰丹姆冰淇淋", address: "伊宁市斯大林街三巷17号（总店），或导航就近分店", dishes: "手工冰淇淋、酸奶、夹沙", price: "约15-35元/人" },
       { name: "丝路之光美食聚", address: "伊宁市重庆北路501号中亚之门商业E区2楼201号", dishes: "新疆菜、烤肉、特色小吃", price: "约50-90元/人" }
     ]
   },
@@ -285,11 +285,11 @@ const foodRecommendations = [
     city: "伊宁-特克斯",
     note: "夏塔游玩时间长，午饭建议景区或镇上快吃，晚饭再进城。",
     lunch: [
-      { name: "夏塔景区游客中心餐厅", address: "昭苏夏塔景区游客中心", dishes: "拌面、抓饭、热饮", price: "约40-80元/人" },
+      { name: "夏塔景区游客中心餐厅", address: "昭苏县夏塔景区游客中心右侧餐饮区", dishes: "拌面、抓饭、热饮", price: "约40-80元/人" },
       { name: "昭苏县城顺路餐厅", address: "昭苏县城主街，可按司机建议选择", dishes: "烤肉、拌面、丸子汤", price: "约35-70元/人" }
     ],
     dinner: [
-      { name: "秘制椒麻鸡烧烤", address: "特克斯县美食街秘制椒麻鸡店", dishes: "椒麻鸡、特色羊排揪片子、烤肉", price: "约50-80元/人" },
+      { name: "秘制椒麻鸡烧烤", address: "特克斯县八卦城阿扎提街美食广场", dishes: "椒麻鸡、特色羊排揪片子、烤肉", price: "约50-80元/人" },
       { name: "八卦城夜市/美食街", address: "特克斯八卦城美食街区域", dishes: "烤肉、烤包子、奶茶、抓饭", price: "约30-70元/人" }
     ]
   },
@@ -298,7 +298,7 @@ const foodRecommendations = [
     city: "特克斯-那拉提",
     note: "库尔德宁当天适合吃热菜，晚餐在那拉提镇更从容。",
     lunch: [
-      { name: "库尔德宁景区周边农家乐", address: "巩留库尔德宁景区周边", dishes: "土鸡、拌面、野菜热菜", price: "约50-90元/人" },
+      { name: "库尔德宁景区周边农家乐", address: "巩留县库尔德宁景区入口向东约1公里路边", dishes: "土鸡、拌面、野菜热菜", price: "约50-90元/人" },
       { name: "巩留县城顺路餐厅", address: "巩留县城主街，可按司机建议选择", dishes: "抓饭、烤肉、丸子汤", price: "约35-70元/人" }
     ],
     dinner: [
@@ -311,12 +311,12 @@ const foodRecommendations = [
     city: "那拉提",
     note: "轻旅拍日不要吃太撑，晚饭留给星空前的舒服热菜。",
     lunch: [
-      { name: "那拉提镇轻食/咖啡店", address: "那拉提镇主街，可导航就近店", dishes: "咖啡、简餐、甜品", price: "约35-70元/人" },
+      { name: "那拉提镇轻食/咖啡店", address: "那拉提镇天马西街中段，可导航就近咖啡馆", dishes: "咖啡、简餐、甜品", price: "约35-70元/人" },
       { name: "小蓝鲸旅游美食城", address: "新源县那拉提镇东街二十七巷", dishes: "拌面、炒菜、烤肉", price: "约50-80元/人" }
     ],
     dinner: [
       { name: "那拉提居阁客栈·餐厅", address: "新源县那拉提镇天马西街五巷008号", dishes: "大盘鸡、烤羊腿、家常热菜", price: "约70-120元/人" },
-      { name: "那拉提镇夜市/烧烤摊", address: "那拉提镇主街夜市区域", dishes: "烤肉、烤馕、奶茶", price: "约30-70元/人" }
+      { name: "那拉提镇夜市/烧烤摊", address: "那拉提镇天马西街与东街交叉口夜市区域", dishes: "烤肉、烤馕、奶茶", price: "约30-70元/人" }
     ]
   },
   {
@@ -324,7 +324,7 @@ const foodRecommendations = [
     city: "那拉提-乌鲁木齐",
     note: "独库长途日，午饭以路况和司机建议为准，晚饭选乌市经典。",
     lunch: [
-      { name: "乔尔玛/独库沿线餐点", address: "独库北段沿线服务点", dishes: "拌面、丸子汤、烤肉", price: "约40-80元/人" },
+      { name: "乔尔玛/独库沿线餐点", address: "独库公路乔尔玛服务区沿线餐厅", dishes: "拌面、丸子汤、烤肉", price: "约40-80元/人" },
       { name: "唐布拉沿线农家乐", address: "唐布拉百里画廊沿线", dishes: "土鸡、拌面、奶茶", price: "约50-90元/人" }
     ],
     dinner: [
@@ -356,16 +356,25 @@ const checklist = [
 ];
 
 const tips = [
-  { title: "车程提醒", body: "这趟行程有多天长距离移动，早上出发前把水、纸巾、外套、充电宝放在随手包里。", tone: "长途" },
-  { title: "天气与温差", body: "喀什、塔县、赛湖、那拉提体感差异很大，夏天也建议带能挡风的外套。", tone: "天气" },
-  { title: "高原节奏", body: "塔县和慕士塔格一线海拔较高，刚到时动作放慢，少饮酒，不要剧烈运动。", tone: "高原" },
-  { title: "安检与证件", body: "新疆安检较常见，身份证随身放好。涉及边境区域时提前和定制团确认边防证要求。", tone: "证件" },
-  { title: "独库路段", body: "独库公路受天气和管制影响较大，6月10日前一天请司机再次确认通行情况。", tone: "路况" },
-  { title: "拍照准备", body: "白沙湖、赛里木湖、那拉提光线很强，浅色衣物、墨镜、防晒和补妆用品会很有用。", tone: "拍照" }
+  { title: "🕐 新疆时间", body: "新疆统一使用北京时间，但地理位置实际晚 2 小时。很多店铺 10 点后才开门，晚饭通常在 20:00-21:00 开始。看日出日落记得换算。", tone: "时差" },
+  { title: "💧 极度干燥", body: "新疆空气湿度极低，润唇膏和保湿霜随身带。鼻腔可能干到出血，药店买一支红霉素软膏涂抹鼻腔很管用。隐形眼镜用户建议备一瓶人工泪液。", tone: "气候" },
+  { title: "🍖 清真饮食礼仪", body: "沿途餐厅绝大多数是清真餐厅，外带非清真食品（如火腿肠、猪肉脯）进清真餐厅是不礼貌的。不浪费食物，不在餐厅内饮酒。", tone: "礼仪" },
+  { title: "📵 边境禁拍", body: "塔县属于边境地区，沿途检查站、军事设施、口岸区域严禁拍照和录像。看到「禁止拍照」标识一定要遵守，违者可能被扣留检查甚至罚款。", tone: "安全" },
+  { title: "🧥 独库一日四季", body: "独库公路北段海拔变化剧烈，山下 30°C 时山顶可能飘雪。短袖、抓绒、冲锋衣全部放在随手可拿的位置，不要塞进后备箱深处。", tone: "路况" },
+  { title: "💴 现金备急", body: "城市里微信和支付宝普及率很高，但帕米尔高原上的牧民摊位、部分景区小摊、独库沿线小卖部可能只收现金。建议备 500-1000 元现金分开放。", tone: "支付" },
+  { title: "🧴 防晒不能省", body: "高原紫外线是平原的 3-5 倍，阴天也会晒伤。SPF50+ 防晒霜每 2-3 小时补涂一次，后颈、耳朵、手背别忘了涂。物理防晒（帽子+墨镜+围巾）更靠谱。", tone: "防护" },
+  { title: "📱 信号盲区", body: "帕米尔高原、独库公路、夏塔景区等多地手机信号弱甚至无信号。提前下载离线地图（推荐高德离线），重要信息截图保存，每天出发前和家人报个平安。", tone: "通讯" }
 ];
 
 const storeKey = "xinjiang-web-checklist";
+const storeCustomKey = "xinjiang-web-checklist-custom";
+const storeHiddenKey = "xinjiang-web-checklist-hidden";
 const checked = JSON.parse(localStorage.getItem(storeKey) || "{}");
+const customItems = JSON.parse(localStorage.getItem(storeCustomKey) || "{}");
+const hiddenItems = JSON.parse(localStorage.getItem(storeHiddenKey) || "{}");
+
+function saveCustomItems() { localStorage.setItem(storeCustomKey, JSON.stringify(customItems)); }
+function saveHiddenItems() { localStorage.setItem(storeHiddenKey, JSON.stringify(hiddenItems)); }
 const $ = (selector) => document.querySelector(selector);
 
 function showToast(message) {
@@ -395,8 +404,15 @@ async function copyText(text, message) {
   }
 }
 
+function buildTripCopy(item) {
+  const header = [`路线: ${item.route}`, `住宿: ${item.location}`, `日期: ${item.date}`, ""];
+  const schedule = item.schedule.map((s) => `${s.time}  ${s.plan}`);
+  const footer = ["", `备注: ${item.note}`];
+  return [...header, ...schedule, ...footer].join("\n");
+}
+
 function renderTrip() {
-  $("#tripList").innerHTML = tripDays.map((item) => `
+  $("#tripList").innerHTML = tripDays.map((item, idx) => `
     <article class="day-card">
       <div class="date-rail">
         <strong>${item.date}</strong>
@@ -426,7 +442,7 @@ function renderTrip() {
           `).join("")}
         </div>
         <div class="note">${item.note}</div>
-        <button class="copy-btn" data-copy="${item.route}" type="button">复制路线</button>
+        <button class="copy-btn" data-trip-copy="${idx}" type="button">复制路线</button>
       </div>
     </article>
   `).join("");
@@ -440,8 +456,8 @@ function renderHotels() {
         <span>${hotel.city}</span>
       </div>
       <h3>${hotel.name}</h3>
-      <p>点击下方按钮复制酒店名，到地图或订单里搜索会更快。</p>
-      <button class="copy-btn" data-copy="${hotel.city} ${hotel.name}" type="button">复制酒店</button>
+      <p class="hotel-address">${hotel.address}</p>
+      <button class="copy-btn" data-copy="${hotel.name}&#10;地址: ${hotel.address}&#10;日期: ${hotel.date} · ${hotel.nights}" type="button">复制酒店</button>
     </article>
   `).join("");
 }
@@ -451,8 +467,10 @@ function renderFood() {
     <div class="food-meal">
       <div class="meal-label">${title}</div>
       <div class="food-options">
-        ${shops.map((shop) => `
-          <button class="food-option" data-copy="${shop.name} ${shop.address}" type="button">
+        ${shops.map((shop) => {
+          const copyText = `${shop.name}&#10;地址: ${shop.address}&#10;推荐: ${shop.dishes}&#10;人均: ${shop.price}`;
+          return `
+          <button class="food-option" data-copy="${copyText}" type="button">
             <span class="food-option-head">
               <strong>${shop.name}</strong>
               <em>${shop.price}</em>
@@ -460,7 +478,7 @@ function renderFood() {
             <span class="food-dishes">${shop.dishes}</span>
             <span class="food-address">${shop.address}</span>
           </button>
-        `).join("")}
+        `}).join("")}
       </div>
     </div>
   `;
@@ -479,25 +497,41 @@ function renderFood() {
 }
 
 function renderChecklist() {
-  $("#checklistGroups").innerHTML = checklist.map((group) => `
+  $("#checklistGroups").innerHTML = checklist.map((group) => {
+    const hidden = hiddenItems[group.group] || [];
+    const customs = customItems[group.group] || [];
+    const visibleDefaults = group.items.filter((label) => !hidden.includes(label));
+    const allItems = [...visibleDefaults.map((l) => ({ label: l, isCustom: false })), ...customs.map((l) => ({ label: l, isCustom: true }))];
+
+    return `
     <section class="check-group">
       <h3>${group.group}</h3>
       <div class="check-items">
-        ${group.items.map((label) => {
+        ${allItems.map(({ label, isCustom }) => {
           const key = `${group.group}-${label}`;
-          const isChecked = checked[key] ? "is-checked" : "";
+          const cls = checked[key] ? "is-checked" : "";
           const mark = checked[key] ? "✓" : "";
           return `
-            <button class="check-item ${isChecked}" data-key="${key}" type="button">
-              <span class="box">${mark}</span>
-              <span>${label}</span>
-            </button>
+            <div class="check-item-wrap">
+              <button class="check-item ${cls}" data-key="${key}" type="button">
+                <span class="box">${mark}</span>
+                <span>${label}</span>
+              </button>
+              <button class="check-del" data-del="${group.group}" data-label="${escapeHTML(label)}" type="button" aria-label="删除">×</button>
+            </div>
           `;
         }).join("")}
       </div>
+      <form class="check-add-form" data-add-group="${group.group}">
+        <input class="check-add-input" type="text" placeholder="添加自定义项…" maxlength="40" />
+        <button class="check-add-btn" type="submit">添加</button>
+      </form>
     </section>
-  `).join("");
+  `;
+  }).join("");
 }
+
+function escapeHTML(str) { const d = document.createElement("div"); d.textContent = str; return d.innerHTML; }
 
 function renderTips() {
   $("#tipList").innerHTML = tips.map((tip) => `
@@ -524,19 +558,64 @@ function bindEvents() {
 
   document.body.addEventListener("click", (event) => {
     const copyButton = event.target.closest("[data-copy]");
-    if (copyButton) copyText(copyButton.dataset.copy, "已复制");
+    if (copyButton) { copyText(copyButton.dataset.copy, "已复制"); return; }
+
+    const tripCopyBtn = event.target.closest("[data-trip-copy]");
+    if (tripCopyBtn) {
+      copyText(buildTripCopy(tripDays[parseInt(tripCopyBtn.dataset.tripCopy)]), "已复制");
+      return;
+    }
 
     const checkButton = event.target.closest(".check-item");
-    if (!checkButton) return;
-    const key = checkButton.dataset.key;
-    checked[key] = !checked[key];
-    localStorage.setItem(storeKey, JSON.stringify(checked));
+    if (checkButton) {
+      const key = checkButton.dataset.key;
+      checked[key] = !checked[key];
+      localStorage.setItem(storeKey, JSON.stringify(checked));
+      renderChecklist();
+      return;
+    }
+
+    const delButton = event.target.closest(".check-del");
+    if (delButton) {
+      const group = delButton.dataset.del;
+      const label = delButton.dataset.label;
+      const isCustom = (customItems[group] || []).includes(label);
+      if (isCustom) {
+        customItems[group] = (customItems[group] || []).filter((l) => l !== label);
+        if (!customItems[group].length) delete customItems[group];
+        saveCustomItems();
+      } else {
+        hiddenItems[group] = [...(hiddenItems[group] || []), label];
+        saveHiddenItems();
+      }
+      showToast("已删除");
+      renderChecklist();
+      return;
+    }
+  });
+
+  document.body.addEventListener("submit", (event) => {
+    const form = event.target.closest(".check-add-form");
+    if (!form) return;
+    event.preventDefault();
+    const group = form.dataset.addGroup;
+    const input = form.querySelector(".check-add-input");
+    const value = input.value.trim();
+    if (!value) return;
+    customItems[group] = [...(customItems[group] || []), value];
+    saveCustomItems();
+    input.value = "";
     renderChecklist();
+    showToast("已添加");
   });
 
   $("#resetChecklist").addEventListener("click", () => {
     Object.keys(checked).forEach((key) => delete checked[key]);
+    Object.keys(customItems).forEach((key) => delete customItems[key]);
+    Object.keys(hiddenItems).forEach((key) => delete hiddenItems[key]);
     localStorage.removeItem(storeKey);
+    saveCustomItems();
+    saveHiddenItems();
     renderChecklist();
     showToast("已重置清单");
   });
