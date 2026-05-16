@@ -1,0 +1,9 @@
+{
+  "name": "新疆旅行随身册",
+  "short_name": "新疆随身册",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fff7ec",
+  "theme_color": "#8fd2d7",
+  "icons": []
+}

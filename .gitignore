@@ -1,0 +1,10 @@
+# WeChat Mini Program files (not needed for web)
+app.js
+app.json
+app.wxss
+pages/
+utils/
+project.config.json
+project.private.config.json
+sitemap.json
+*.zip

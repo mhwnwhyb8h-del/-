@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#8fd2d7" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="新疆随身册" />
+    <title>新疆旅行随身册</title>
+    <link rel="manifest" href="./manifest.webmanifest?v=7" />
+    <link rel="stylesheet" href="./styles.css?v=7" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero" aria-label="旅行总览">
+        <div class="hero-copy">
+          <p class="eyebrow">PRIVATE TOUR · 3人同行</p>
+          <h1>新疆旅行随身册</h1>
+          <p class="hero-text">6月1日到6月11日，从喀什、帕米尔到伊犁草原，再回到乌鲁木齐。</p>
+          <div class="hero-stats">
+            <span>司机全程开车</span>
+            <span>10晚酒店</span>
+            <span>高原 + 草原线</span>
+          </div>
+        </div>
+        <div class="route-art" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="peak peak-a"></div>
+          <div class="peak peak-b"></div>
+          <svg viewBox="0 0 260 180" role="img">
+            <path class="route-shadow" d="M34 134 C78 94, 78 36, 128 56 S171 124, 224 46" />
+            <path class="route-line" d="M34 134 C78 94, 78 36, 128 56 S171 124, 224 46" />
+            <g class="dots">
+              <circle cx="34" cy="134" r="5" />
+              <circle cx="128" cy="56" r="5" />
+              <circle cx="224" cy="46" r="5" />
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <nav class="tabs" aria-label="页面切换">
+        <button class="tab is-active" data-panel="trip" type="button">行程</button>
+        <button class="tab" data-panel="hotels" type="button">酒店</button>
+        <button class="tab" data-panel="food" type="button">美食</button>
+        <button class="tab" data-panel="checklist" type="button">清单</button>
+        <button class="tab" data-panel="tips" type="button">提醒</button>
+      </nav>
+
+      <section class="panel is-active" id="trip" aria-label="每日行程">
+        <div class="section-heading">
+          <h2>每日路线</h2>
+          <p>住宿已按你给的日期对齐，时间为大致建议，可按司机、路况和当天体力微调。</p>
+        </div>
+        <div class="timeline" id="tripList"></div>
+      </section>
+
+      <section class="panel" id="hotels" aria-label="酒店列表">
+        <div class="section-heading">
+          <h2>每晚落脚点</h2>
+          <p>点击酒店名可复制，后续补地址后可以加一键导航。</p>
+        </div>
+        <div class="list" id="hotelList"></div>
+      </section>
+
+      <section class="panel" id="food" aria-label="美食店铺推荐">
+        <div class="section-heading">
+          <h2>每日美食</h2>
+          <p>按每天所在城市推荐，地址和人均为公开信息与旅行参考价，出发前可再用地图确认营业状态。</p>
+        </div>
+        <div class="list" id="foodList"></div>
+      </section>
+
+      <section class="panel" id="checklist" aria-label="出发清单">
+        <div class="section-heading with-action">
+          <div>
+            <h2>出发前清单</h2>
+            <p>勾选状态会保存在这台手机的浏览器里。</p>
+          </div>
+          <button class="small-action" id="resetChecklist" type="button">重置</button>
+        </div>
+        <div id="checklistGroups"></div>
+      </section>
+
+      <section class="panel" id="tips" aria-label="旅行提醒">
+        <div class="section-heading">
+          <h2>路上提醒</h2>
+          <p>把容易被忙碌行程冲掉的小事放在最顺手的位置。</p>
+        </div>
+        <div class="list" id="tipList"></div>
+        <div class="emergency">
+          <a href="tel:120">拨打 120</a>
+          <a href="tel:110">拨打 110</a>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./script.js?v=7"></script>
+  </body>
+</html>
