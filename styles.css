@@ -423,38 +423,41 @@ h2 {
   text-align: center;
 }
 
-.route {
-  margin-top: 12px;
-  color: #49443d;
+.route-block {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(238, 251, 250, .72), rgba(255, 248, 232, .48));
+}
+
+.route-line {
+  margin: 0;
+  color: #3a5a4e;
   font-size: 15px;
-  line-height: 1.65;
+  font-weight: 600;
+  line-height: 1.6;
 }
 
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 13px;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 .chips span {
-  padding: 7px 10px;
+  padding: 5px 9px;
   border-radius: 999px;
-  background: #e7f7f4;
-  color: #27736c;
+  background: rgba(20, 127, 136, .1);
+  color: #147f88;
   font-size: 12px;
 }
 
-.best-time,
-.outfit {
+.outfit,
+.trip-tips {
   margin-top: 14px;
   padding: 13px 14px;
   border-radius: 18px;
-}
-
-.best-time {
-  border: 1px solid rgba(53, 174, 186, .2);
-  background: linear-gradient(135deg, rgba(223, 248, 250, .96), rgba(236, 255, 243, .9));
 }
 
 .outfit {
@@ -464,8 +467,13 @@ h2 {
     radial-gradient(circle at 95% 0, rgba(143, 210, 215, .24), transparent 90px);
 }
 
-.best-time span,
-.outfit span {
+.trip-tips {
+  border: 1px solid rgba(53, 174, 186, .2);
+  background: linear-gradient(135deg, rgba(223, 248, 250, .96), rgba(236, 255, 243, .9));
+}
+
+.outfit span,
+.trip-tips span {
   display: block;
   margin-bottom: 6px;
   color: #126f7a;
@@ -473,8 +481,8 @@ h2 {
   font-weight: 700;
 }
 
-.best-time p,
-.outfit p {
+.outfit p,
+.trip-tips p {
   margin: 0;
   color: #514b43;
   font-size: 14px;
@@ -505,15 +513,6 @@ h2 {
   color: #49443d;
   font-size: 14px;
   line-height: 1.6;
-}
-
-.note {
-  margin-top: 14px;
-  padding-left: 12px;
-  border-left: 4px solid #8fd2d7;
-  color: #665e54;
-  font-size: 14px;
-  line-height: 1.65;
 }
 
 .copy-btn,
@@ -563,22 +562,36 @@ h2 {
   font-size: 13px;
 }
 
-.hotel-card h3,
-.food-card h3,
-.tip-card h3,
-.check-group h3 {
-  margin: 0;
+.hotel-card h3 {
+  margin: 10px 0 0;
   font-size: 18px;
   line-height: 1.35;
 }
 
-.hotel-card p,
-.food-card p,
-.tip-card p {
+.hotel-card h3,
+.food-card h3,
+.tip-card h3,
+.check-group h3 {
   margin: 10px 0 0;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.hotel-card .hotel-address {
+  margin: 6px 0 0;
+  color: var(--teal);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.hotel-card .hotel-phone {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+.hotel-card .hotel-phone a {
   color: #514b43;
-  font-size: 14px;
-  line-height: 1.65;
+  text-decoration: none;
 }
 
 .food-detail {

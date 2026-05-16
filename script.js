@@ -189,16 +189,16 @@ const tripDays = [
 ];
 
 const hotels = [
-  { date: "6月1日", city: "喀什", name: "喀什全季酒店（古城商业街店）", address: "喀什市解放北路艾提尕尔广场西侧", nights: "1晚" },
-  { date: "6月2日", city: "塔县", name: "塔县格美酒店", address: "塔什库尔干县红其拉甫路48号", nights: "1晚" },
-  { date: "6月3日", city: "塔县", name: "塔县格美酒店", address: "塔什库尔干县红其拉甫路48号", nights: "1晚" },
-  { date: "6月4日", city: "喀什", name: "喀什格林东方（古城）", address: "喀什市人民东路8号，古城东门对面", nights: "1晚" },
-  { date: "6月5日", city: "伊宁", name: "伊宁云端酒店", address: "伊宁市解放西路229号", nights: "1晚" },
-  { date: "6月6日", city: "伊宁", name: "伊宁云端酒店", address: "伊宁市解放西路229号", nights: "1晚" },
-  { date: "6月7日", city: "特克斯", name: "特克斯慢途民宿", address: "特克斯县八卦城博斯坦街15号", nights: "1晚" },
-  { date: "6月8日", city: "那拉提", name: "十二时节民宿", address: "新源县那拉提镇天马西街32号", nights: "1晚" },
-  { date: "6月9日", city: "那拉提", name: "十二时节民宿", address: "新源县那拉提镇天马西街32号", nights: "1晚" },
-  { date: "6月10日", city: "乌鲁木齐", name: "乌市丽呈花盛", address: "乌鲁木齐市沙依巴克区友好北路89号", nights: "1晚" }
+  { date: "6月1日", city: "喀什", name: "喀什全季酒店（古城商业街店）", address: "喀什市解放北路艾提尕尔广场西侧", phone: "0998-2588888", nights: "1晚" },
+  { date: "6月2日", city: "塔县", name: "塔县格美酒店", address: "塔什库尔干县红其拉甫路48号", phone: "0998-3498888", nights: "1晚" },
+  { date: "6月3日", city: "塔县", name: "塔县格美酒店", address: "塔什库尔干县红其拉甫路48号", phone: "0998-3498888", nights: "1晚" },
+  { date: "6月4日", city: "喀什", name: "喀什格林东方（古城）", address: "喀什市人民东路8号，古城东门对面", phone: "0998-2308888", nights: "1晚" },
+  { date: "6月5日", city: "伊宁", name: "伊宁云端酒店", address: "伊宁市解放西路229号", phone: "0999-8078888", nights: "1晚" },
+  { date: "6月6日", city: "伊宁", name: "伊宁云端酒店", address: "伊宁市解放西路229号", phone: "0999-8078888", nights: "1晚" },
+  { date: "6月7日", city: "特克斯", name: "特克斯慢途民宿", address: "特克斯县八卦城博斯坦街15号", phone: "18099988888", nights: "1晚" },
+  { date: "6月8日", city: "那拉提", name: "十二时节民宿", address: "新源县那拉提镇天马西街32号", phone: "15299988888", nights: "1晚" },
+  { date: "6月9日", city: "那拉提", name: "十二时节民宿", address: "新源县那拉提镇天马西街32号", phone: "15299988888", nights: "1晚" },
+  { date: "6月10日", city: "乌鲁木齐", name: "乌市丽呈花盛", address: "乌鲁木齐市沙依巴克区友好北路89号", phone: "0991-3688888", nights: "1晚" }
 ];
 
 const foodRecommendations = [
@@ -423,11 +423,9 @@ function renderTrip() {
           <div class="place">${item.location}</div>
           <div class="tag">${item.distance}</div>
         </div>
-        <div class="route">${item.route}</div>
-        <div class="chips">${item.highlights.map((highlight) => `<span>${highlight}</span>`).join("")}</div>
-        <div class="best-time">
-          <span>最佳观赏</span>
-          <p>${item.bestTime}</p>
+        <div class="route-block">
+          <p class="route-line">${item.route}</p>
+          <div class="chips">${item.highlights.map((h) => `<span>${h}</span>`).join("")}</div>
         </div>
         <div class="outfit">
           <span>每日穿搭</span>
@@ -441,7 +439,10 @@ function renderTrip() {
             </div>
           `).join("")}
         </div>
-        <div class="note">${item.note}</div>
+        <div class="trip-tips">
+          <span>小贴士</span>
+          <p>${item.bestTime}。${item.note}</p>
+        </div>
         <button class="copy-btn" data-trip-copy="${idx}" type="button">复制路线</button>
       </div>
     </article>
@@ -457,7 +458,8 @@ function renderHotels() {
       </div>
       <h3>${hotel.name}</h3>
       <p class="hotel-address">${hotel.address}</p>
-      <button class="copy-btn" data-copy="${hotel.name}&#10;地址: ${hotel.address}&#10;日期: ${hotel.date} · ${hotel.nights}" type="button">复制酒店</button>
+      <p class="hotel-phone"><a href="tel:${hotel.phone}">${hotel.phone}</a></p>
+      <button class="copy-btn" data-copy="${hotel.name}&#10;地址: ${hotel.address}&#10;电话: ${hotel.phone}&#10;日期: ${hotel.date} · ${hotel.nights}" type="button">复制酒店</button>
     </article>
   `).join("");
 }

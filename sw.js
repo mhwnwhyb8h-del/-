@@ -1,4 +1,4 @@
-const cacheName = "xinjiang-travel-v8";
+const cacheName = "xinjiang-travel-v9";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
