@@ -28,9 +28,10 @@
     @media (max-width:480px) { .form-grid { grid-template-columns: 1fr; } }
     .field { display: flex; flex-direction: column; gap: 5px; }
     .field label { font-size: 13px; font-weight: 600; color: #324052; }
+    .field .optional { font-weight: 400; color: var(--muted); font-size: 11px; }
     .field input, .field textarea { min-height: 44px; padding: 10px 14px; border: 1px solid rgba(234,219,201,.86); border-radius: 14px; font: inherit; font-size: 15px; background: #fffaf0; outline: none; resize: vertical; }
     .field input:focus, .field textarea:focus { border-color: var(--teal); }
-    .field textarea { min-height: 80px; }
+    .field textarea { min-height: 68px; }
     .field .sublabel { font-size: 11px; color: var(--muted); }
 
     .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -38,6 +39,8 @@
     .btn-primary { background: var(--teal); color: #fff; box-shadow: 0 8px 22px rgba(20,127,136,.22); }
     .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
     .btn-secondary { background: transparent; border: 1px solid rgba(53,174,186,.38); color: var(--teal); }
+    .btn-danger { min-height: 36px; padding: 0 16px; border: 1px solid #fcc; border-radius: 12px; background: #fff; color: #d94a4a; font: inherit; font-size: 13px; cursor: pointer; }
+    .btn-danger:hover { background: #fef0f0; }
 
     .loading-box { display: none; text-align: center; padding: 32px; }
     .loading-box.is-active { display: block; }
@@ -55,13 +58,47 @@
     .toc-bar::-webkit-scrollbar { display: none; }
     .toc-link { flex: none; padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; transition: all .2s ease; }
     .toc-link.is-active, .toc-link:hover { background: var(--teal); color: #fff; box-shadow: 0 6px 16px rgba(20,127,136,.18); }
+
+    /* history */
+    .history-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(234,219,201,.66); }
+    .history-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .history-head h2 { margin: 0; font-size: 18px; color: #324052; }
+    .history-list { display: grid; gap: 8px; }
+    .history-item { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid rgba(234,219,201,.66); border-radius: 16px; background: #fffaf0; cursor: pointer; transition: all .15s ease; }
+    .history-item:hover { border-color: var(--teal); background: #eefbfa; }
+    .history-item input[type=checkbox] { flex: none; width: 18px; height: 18px; accent-color: var(--teal); }
+    .history-info { flex: 1; min-width: 0; }
+    .history-info strong { display: block; font-size: 15px; color: var(--ink); }
+    .history-info span { font-size: 12px; color: var(--muted); }
+    .history-del { flex: none; width: 28px; height: 28px; border: 0; border-radius: 50%; background: transparent; color: #c4b8a8; font-size: 16px; cursor: pointer; }
+    .history-del:hover { background: #fce4e4; color: #d94a4a; }
+    .history-empty { text-align: center; padding: 24px; color: var(--muted); font-size: 14px; }
+
+    /* hotel options */
+    .hotel-options { margin-top: 8px; }
+    .hotel-option { padding: 12px; margin-top: 6px; border: 1px solid rgba(234,219,201,.66); border-radius: 14px; background: #fffdf7; }
+    .hotel-option .ho-name { font-size: 15px; font-weight: 700; color: var(--ink); }
+    .hotel-option .ho-addr, .hotel-option .ho-phone { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .hotel-option .ho-procon { display: flex; gap: 16px; margin-top: 6px; font-size: 12px; }
+    .ho-pros, .ho-cons { flex: 1; }
+    .ho-pros span { color: #3f8b6b; }
+    .ho-cons span { color: #d98a5a; }
+    .ho-pros li, .ho-cons li { margin-top: 2px; color: #514b43; }
+    .hotel-show-more { display: inline-block; margin-top: 6px; padding: 0; border: 0; background: none; color: var(--teal); font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; }
+
+    /* budget tag */
+    .budget-tag { display: inline-block; margin-top: 6px; padding: 4px 10px; border-radius: 999px; background: #fff2c6; color: #8a6d14; font-size: 12px; font-weight: 600; }
+
+    /* expanded hotel options */
+    .hotel-options-panel { display: none; }
+    .hotel-options-panel.is-open { display: block; }
   </style>
 </head>
 <body>
 <div id="inputMode" class="gen-page">
   <div class="gen-hero">
     <h1>旅行随身册 · 生成器</h1>
-    <p>输入目的地、时间和人数，AI 自动生成完整旅行攻略，酒店按新开业·高评分·高舒适度标准推荐。</p>
+    <p>输入目的地、时间和人数，AI 自动生成完整旅行攻略。每家酒店提供多选项+优缺点对比，每日含预算参考。</p>
   </div>
 
   <div class="setup-box is-open" id="setupBox">
@@ -81,26 +118,20 @@
 
   <form id="genForm">
     <div class="form-grid">
-      <div class="field">
-        <label>目的地</label>
-        <input type="text" id="destInput" placeholder="如：云南大理、日本京都…" required />
-      </div>
-      <div class="field">
-        <label>出发日期</label>
-        <input type="date" id="dateInput" required />
-      </div>
-      <div class="field">
-        <label>行程天数</label>
-        <input type="number" id="daysInput" value="7" min="2" max="20" required />
-      </div>
-      <div class="field">
-        <label>出行人数</label>
-        <input type="number" id="peopleInput" value="2" min="1" max="20" required />
-        <span class="sublabel">用于推荐房型和用餐份量</span>
-      </div>
+      <div class="field"><label>目的地 <span class="optional">*</span></label><input type="text" id="destInput" placeholder="如：云南大理、日本京都…" required /></div>
+      <div class="field"><label>出发日期 <span class="optional">*</span></label><input type="date" id="dateInput" required /></div>
+      <div class="field"><label>行程天数 <span class="optional">*</span></label><input type="number" id="daysInput" value="7" min="2" max="20" required /></div>
+      <div class="field"><label>出行人数 <span class="optional">*</span></label><input type="number" id="peopleInput" value="2" min="1" max="20" required /><span class="sublabel">用于推荐房型和用餐份量</span></div>
+      <div class="field"><label>抵达时间 <span class="optional">（选填）</span></label><input type="time" id="arriveTimeInput" /></div>
+      <div class="field"><label>离开时间 <span class="optional">（选填）</span></label><input type="time" id="departTimeInput" /></div>
+    </div>
+    <div class="field" style="margin-bottom:12px;">
+      <label>目标景点 <span class="optional">（选填）</span></label>
+      <textarea id="attractionsInput" placeholder="这趟行程一定要去的地方，如：布达拉宫、羊卓雍措、纳木错…"></textarea>
+      <span class="sublabel">填写后 AI 会确保这些景点被安排进行程</span>
     </div>
     <div class="field" style="margin-bottom:16px;">
-      <label>额外偏好（选填）</label>
+      <label>额外偏好 <span class="optional">（选填）</span></label>
       <textarea id="prefsInput" placeholder="如：喜欢自然风光、预算中等、不赶路、需要亲子友好…"></textarea>
     </div>
     <div class="btn-row">
@@ -111,6 +142,16 @@
   <div class="loading-box" id="loadingBox">
     <div class="spinner"></div>
     <p id="loadingText">正在规划行程…</p>
+  </div>
+
+  <div class="history-section" id="historySection">
+    <div class="history-head">
+      <h2>📋 过往攻略</h2>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-danger" id="batchDelBtn" type="button" style="display:none;">删除选中</button>
+      </div>
+    </div>
+    <div class="history-list" id="historyList"></div>
   </div>
 </div>
 
@@ -133,12 +174,12 @@
 
 <script>
 (function() {
-  // ── state ──
   let travelData = null;
   let apiKey = localStorage.getItem("travel-gen-ds-key") || "";
   const storeDataKey = "travel-gen-data";
+  const storeHistoryKey = "travel-gen-history";
+  const MAX_HISTORY = 20;
 
-  // ── dom ──
   const $ = (s) => document.querySelector(s);
   const inputMode = $("#inputMode");
   const viewMode = $("#viewMode");
@@ -156,25 +197,110 @@
   const dateInput = $("#dateInput");
   const daysInput = $("#daysInput");
   const peopleInput = $("#peopleInput");
+  const arriveTimeInput = $("#arriveTimeInput");
+  const departTimeInput = $("#departTimeInput");
+  const attractionsInput = $("#attractionsInput");
   const prefsInput = $("#prefsInput");
   const backBtn = $("#backBtn");
   const exportBtn = $("#exportBtn");
   const viewContent = $("#viewContent");
   const toast = $("#toast");
+  const historyList = $("#historyList");
+  const batchDelBtn = $("#batchDelBtn");
+
+  // ── history ──
+  function getHistory() {
+    try { return JSON.parse(localStorage.getItem(storeHistoryKey) || "[]"); } catch { return []; }
+  }
+  function saveHistory(arr) { localStorage.setItem(storeHistoryKey, JSON.stringify(arr.slice(0, MAX_HISTORY))); }
+
+  function addToHistory(data) {
+    const arr = getHistory();
+    arr.unshift({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+      destination: destInput.value.trim(),
+      startDate: dateInput.value,
+      days: parseInt(daysInput.value),
+      people: parseInt(peopleInput.value),
+      generatedAt: new Date().toISOString(),
+      data: data
+    });
+    saveHistory(arr);
+    renderHistory();
+  }
+
+  function deleteHistory(id) {
+    saveHistory(getHistory().filter((h) => h.id !== id));
+    renderHistory();
+  }
+
+  function batchDeleteHistory(ids) {
+    const idSet = new Set(ids);
+    saveHistory(getHistory().filter((h) => !idSet.has(h.id)));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const arr = getHistory();
+    if (!arr.length) { historyList.innerHTML = '<div class="history-empty">还没有生成过攻略</div>'; batchDelBtn.style.display = "none"; return; }
+    const checked = new Set();
+    historyList.innerHTML = arr.map((h) => {
+      const d = new Date(h.startDate);
+      const dateStr = (d.getMonth()+1)+"月"+d.getDate()+"日";
+      const genDate = new Date(h.generatedAt);
+      const genStr = genDate.getMonth()+1+"/"+genDate.getDate()+" "+genDate.getHours().toString().padStart(2,"0")+":"+genDate.getMinutes().toString().padStart(2,"0");
+      return '<div class="history-item" data-hid="'+h.id+'"><input type="checkbox" class="hist-cb" data-hid="'+h.id+'" /><div class="history-info"><strong>'+h.destination+'</strong><span>'+dateStr+' · '+h.days+'天 · '+h.people+'人 ｜ '+genStr+' 生成</span></div><button class="history-del" data-hdel="'+h.id+'" aria-label="删除">×</button></div>';
+    }).join("");
+    batchDelBtn.style.display = "block";
+  }
+
+  // history events
+  historyList.addEventListener("click", (e) => {
+    const delBtn = e.target.closest("[data-hdel]");
+    if (delBtn) { e.stopPropagation(); deleteHistory(delBtn.dataset.hdel); return; }
+    const cb = e.target.closest(".hist-cb");
+    if (cb) { e.stopPropagation(); updateBatchBtn(); return; }
+    const item = e.target.closest(".history-item");
+    if (item) {
+      const h = getHistory().find((hh) => hh.id === item.dataset.hid);
+      if (h && h.data) {
+        travelData = h.data;
+        destInput.value = h.destination;
+        dateInput.value = h.startDate;
+        daysInput.value = h.days;
+        peopleInput.value = h.people;
+        localStorage.setItem(storeDataKey, JSON.stringify(h.data));
+        renderView(h.data);
+        inputMode.style.display = "none";
+        viewMode.classList.add("is-active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  });
+
+  batchDelBtn.addEventListener("click", () => {
+    const ids = [...document.querySelectorAll(".hist-cb:checked")].map((c) => c.dataset.hid);
+    if (!ids.length) { showToast("请先勾选要删除的攻略"); return; }
+    batchDeleteHistory(ids);
+    showToast("已删除 "+ids.length+" 条");
+  });
+
+  function updateBatchBtn() {
+    const count = document.querySelectorAll(".hist-cb:checked").length;
+    batchDelBtn.textContent = count ? "删除选中 ("+count+")" : "删除选中";
+  }
+
+  renderHistory();
 
   // ── api key ──
   function updateSetupUI() {
     if (apiKey) {
-      setupBox.classList.add("is-set");
-      setupBox.classList.remove("is-open");
-      setupStatus.textContent = "已设置 ✓";
-      setupStatus.style.color = "var(--teal)";
+      setupBox.classList.add("is-set"); setupBox.classList.remove("is-open");
+      setupStatus.textContent = "已设置 ✓"; setupStatus.style.color = "var(--teal)";
       apiKeyInput.value = apiKey;
     } else {
-      setupBox.classList.remove("is-set");
-      setupBox.classList.add("is-open");
-      setupStatus.textContent = "未设置";
-      setupStatus.style.color = "";
+      setupBox.classList.remove("is-set"); setupBox.classList.add("is-open");
+      setupStatus.textContent = "未设置"; setupStatus.style.color = "";
     }
   }
   updateSetupUI();
@@ -196,115 +322,75 @@
 
   // ── toast ──
   function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add("show");
+    toast.textContent = msg; toast.classList.add("show");
     clearTimeout(showToast.timer);
     showToast.timer = setTimeout(() => toast.classList.remove("show"), 1600);
   }
 
   // ── error ──
-  function showError(msg) {
-    errorBox.textContent = msg;
-    errorBox.classList.add("is-active");
-  }
+  function showError(msg) { errorBox.textContent = msg; errorBox.classList.add("is-active"); }
   function hideError() { errorBox.classList.remove("is-active"); }
 
   // ── loading ──
-  const loadingMessages = [
-    "正在分析目的地…", "正在规划每日路线…", "正在筛选酒店…", "正在搜索美食…", "正在整理清单…", "即将完成…"
-  ];
-  let loadingIdx = 0;
-  let loadingTimer = null;
+  const loadingMessages = ["正在分析目的地…","正在规划每日路线…","正在筛选酒店（多选项+优缺点）…","正在搜索美食…","正在估算每日预算…","正在整理清单…","即将完成…"];
+  let loadingIdx = 0, loadingTimer = null;
   function startLoading() {
-    loadingBox.classList.add("is-active");
-    genBtn.disabled = true;
-    loadingIdx = 0;
+    loadingBox.classList.add("is-active"); genBtn.disabled = true; loadingIdx = 0;
     loadingText.textContent = loadingMessages[0];
-    loadingTimer = setInterval(() => {
-      loadingIdx = (loadingIdx + 1) % loadingMessages.length;
-      loadingText.textContent = loadingMessages[loadingIdx];
-    }, 3500);
+    loadingTimer = setInterval(() => { loadingIdx = (loadingIdx+1) % loadingMessages.length; loadingText.textContent = loadingMessages[loadingIdx]; }, 4000);
   }
-  function stopLoading() {
-    loadingBox.classList.remove("is-active");
-    genBtn.disabled = false;
-    clearInterval(loadingTimer);
-  }
+  function stopLoading() { loadingBox.classList.remove("is-active"); genBtn.disabled = false; clearInterval(loadingTimer); }
 
   // ── API call (DeepSeek) ──
   async function callAI(systemPrompt, userMessage) {
     const resp = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + apiKey
-      },
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + apiKey },
       body: JSON.stringify({
-        model: "deepseek-v4-pro",
-        max_tokens: 8192,
-        temperature: 0.7,
+        model: "deepseek-v4-pro", max_tokens: 8192, temperature: 0.7,
         response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userMessage }
-        ]
+        messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userMessage }]
       })
     });
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      throw new Error(err.error?.message || `API 请求失败 (${resp.status})`);
-    }
+    if (!resp.ok) { const err = await resp.json().catch(() => ({})); throw new Error(err.error?.message || "API 请求失败 ("+resp.status+")"); }
     const data = await resp.json();
     return data.choices[0].message.content;
   }
 
-  function extractJSON(text) {
-    const clean = text.replace(/```(?:json)?\s*/g, "").trim();
-    const start = clean.indexOf("{");
-    const end = clean.lastIndexOf("}");
-    if (start === -1 || end === -1) throw new Error("响应中未找到 JSON");
-    return JSON.parse(clean.slice(start, end + 1));
-  }
-
   // ── generate ──
   genForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    hideError();
-
-    if (!apiKey) {
-      showError("请先设置 DeepSeek API Key（点击上方 API Key 设置）。获取地址：platform.deepseek.com");
-      setupBox.classList.add("is-open");
-      setupBox.classList.remove("is-set");
-      return;
-    }
+    e.preventDefault(); hideError();
+    if (!apiKey) { showError("请先设置 DeepSeek API Key（点击上方 API Key 设置）。获取地址：platform.deepseek.com"); setupBox.classList.add("is-open"); setupBox.classList.remove("is-set"); return; }
 
     const dest = destInput.value.trim();
     const startDate = dateInput.value;
     const days = parseInt(daysInput.value);
     const people = parseInt(peopleInput.value);
     const prefs = prefsInput.value.trim();
+    const arriveTime = arriveTimeInput.value;
+    const departTime = departTimeInput.value;
+    const attractions = attractionsInput.value.trim();
 
     if (!dest || !startDate || !days) { showError("请填写目的地、日期和天数"); return; }
 
-    // compute end date
     const start = new Date(startDate);
-    const end = new Date(start);
-    end.setDate(end.getDate() + days - 1);
-    const endStr = `${end.getMonth()+1}月${end.getDate()}日`;
-    const startStr = `${start.getMonth()+1}月${start.getDate()}日`;
+    const end = new Date(start); end.setDate(end.getDate() + days - 1);
+    const endStr = (end.getMonth()+1)+"月"+end.getDate()+"日";
+    const startStr = (start.getMonth()+1)+"月"+start.getDate()+"日";
 
     startLoading();
-
     try {
       const systemPrompt = `你是一位资深旅行规划专家。根据用户输入的目的地、日期、人数和偏好，生成一份完整详细的旅行随身册数据。
 
 你必须返回纯 JSON（不要包裹在 markdown 代码块中），格式如下：
 {
   "tripDays": [
-    { "day": "抵达日", "date": "X月X日", "route": "简短路线描述", "location": "当晚住宿城市", "distance": "车程描述如约300km/4h或城市转场或环线游玩", "highlights": ["亮点1","亮点2"], "bestTime": "最佳观赏时间和光线建议", "outfit": "每日穿搭建议（含颜色搭配推荐，150字以内）", "schedule": [{"time":"08:00-09:00","plan":"具体安排"}], "note": "当天特别提醒" }
+    { "day": "抵达日", "date": "X月X日", "route": "简短路线描述", "location": "当晚住宿城市", "distance": "车程描述如约300km/4h或城市转场或环线游玩", "highlights": ["亮点1","亮点2"], "bestTime": "最佳观赏时间和光线建议", "outfit": "每日穿搭建议（含颜色搭配推荐，150字以内）", "budget": "约XX-XX元/人（含门票/交通/餐饮说明）", "schedule": [{"time":"08:00-09:00","plan":"具体安排"}], "note": "当天特别提醒" }
   ],
   "hotels": [
-    { "date": "X月X日", "city": "城市", "name": "酒店全名", "address": "详细地址", "phone": "电话", "nights": "X晚" }
+    { "date": "X月X日", "city": "城市", "nights": "X晚", "options": [
+      { "name": "酒店全名", "address": "详细地址", "phone": "电话", "pros": ["优点1","优点2","优点3"], "cons": ["不足1"] }
+    ] }
   ],
   "foodRecommendations": [
     { "date": "X月X日", "city": "城市", "note": "当天餐饮说明", "lunch": [{"name":"餐厅名","address":"详细地址","dishes":"推荐菜","price":"约XX-XX元/人"}], "dinner": [{"name":"餐厅名","address":"详细地址","dishes":"推荐菜","price":"约XX-XX元/人"}] }
@@ -318,28 +404,33 @@
 }
 
 重要要求：
-1. tripDays 按日期顺序，从抵达日到最后一天。schedule 每天 4 个时间段。
-2. 酒店筛选标准极为重要：优先推荐 2024-2025 年新开业或新装修的酒店；评分 ≥ 4.5（满分5）；差评率低于 5%；舒适型及以上（四星级标准或精品民宿）。每处酒店必须包含详细的地址和电话。
+1. tripDays 按日期顺序，从抵达日到最后一天。schedule 每天 4 个时间段。每个行程日必须有 budget 字段，估算当天人均花费（考虑交通、门票、餐饮、住宿外的开销）。
+2. 酒店推荐极为重要：每晚推荐 2-3 家酒店作为 options 数组。筛选标准：优先 2024-2025 年新开业/新装修；评分 ≥ 4.5；差评率 < 5%；舒适型及以上（四星或精品民宿）。每家酒店必须列出至少 2 条优点（pros）和 1 条不足（cons），必须包含详细地址和电话。
 3. 美食推荐要包含当地真正的特色餐厅，地址尽量具体，避免"景区周边"这种模糊描述。
 4. checklist 分 5-6 组，每组 3-8 项。
 5. tips 需要 6-8 条，贴合目的地实际情况。
 6. 所有内容用中文，日期格式为"X月X日"。
 7. 路线安排要合理，景点之间的距离和游玩时间要科学。`;
 
-      const userMessage = `目的地：${dest}
+      let userMessage = `目的地：${dest}
 出发日期：${startStr}，共 ${days} 天（${startStr} - ${endStr}）
-出行人数：${people} 人
-${prefs ? "额外偏好：" + prefs : ""}
+出行人数：${people} 人`;
 
-请生成旅行随身册数据。`;
+      if (arriveTime) userMessage += `\n抵达时间：${arriveTime}`;
+      if (departTime) userMessage += `\n离开时间：${departTime}`;
+      if (attractions) userMessage += `\n必须包含的景点：${attractions}（这些景点必须在行程中安排）`;
+      if (prefs) userMessage += `\n额外偏好：${prefs}`;
+      if (arriveTime) userMessage += `\n\n请注意：根据抵达时间 ${arriveTime} 调整第一天的安排。`;
+      if (departTime) userMessage += `\n请注意：根据离开时间 ${departTime} 调整最后一天的安排。`;
+
+      userMessage += "\n\n请生成旅行随身册数据。";
 
       const content = await callAI(systemPrompt, userMessage);
       const data = JSON.parse(content);
       travelData = data;
 
-      // save
       localStorage.setItem(storeDataKey, JSON.stringify(data));
-      // render
+      addToHistory(data);
       renderView(data);
       stopLoading();
       inputMode.style.display = "none";
@@ -352,11 +443,11 @@ ${prefs ? "额外偏好：" + prefs : ""}
     }
   });
 
-  // ── render functions (adapted from script.js) ──
+  // ── render functions ──
   function buildTripCopy(item) {
-    const header = ["路线: " + item.route, "住宿: " + item.location, "日期: " + item.date, ""];
-    const schedule = item.schedule.map((s) => s.time + "  " + s.plan);
-    const footer = ["", "备注: " + item.note];
+    const header = ["路线: "+item.route, "住宿: "+item.location, "日期: "+item.date, "预算: "+(item.budget||"未估算"), ""];
+    const schedule = item.schedule.map((s) => s.time+"  "+s.plan);
+    const footer = ["", "备注: "+item.note];
     return [...header, ...schedule, ...footer].join("\n");
   }
 
@@ -366,257 +457,139 @@ ${prefs ? "额外偏好：" + prefs : ""}
         <div class="hero-copy">
           <p class="eyebrow">PRIVATE TOUR · ${peopleInput.value}人同行</p>
           <h1>${destInput.value.trim()}旅行随身册</h1>
-          <p class="hero-text">${dateInput.value ? (() => { const s = new Date(dateInput.value); return (s.getMonth()+1)+"月"+(s.getDate())+"日"; })() : ""} 到 ${(() => { const s = new Date(dateInput.value); if (!dateInput.value) return ""; const e = new Date(s); e.setDate(e.getDate() + parseInt(daysInput.value) - 1); return (e.getMonth()+1)+"月"+(e.getDate())+"日"; })()}，共 ${daysInput.value} 天。</p>
-          <div class="hero-stats">
-            <span>${data.tripDays[0]?.location || ""} 出发</span>
-            <span>${data.hotels.length} 晚酒店</span>
-            <span>${peopleInput.value} 人出行</span>
-          </div>
+          <p class="hero-text">${dateInput.value ? (()=>{const s=new Date(dateInput.value);return(s.getMonth()+1)+"月"+s.getDate()+"日";})():""} 到 ${(()=>{const s=new Date(dateInput.value);if(!dateInput.value)return"";const e=new Date(s);e.setDate(e.getDate()+parseInt(daysInput.value)-1);return(e.getMonth()+1)+"月"+e.getDate()+"日";})()}，共 ${daysInput.value} 天。</p>
+          <div class="hero-stats"><span>${data.tripDays[0]?.location||""} 出发</span><span>${data.hotels.length} 晚酒店</span><span>${peopleInput.value} 人出行</span></div>
         </div>
-        <div class="route-art" aria-hidden="true">
-          <div class="sun"></div>
-          <div class="peak peak-a"></div>
-          <div class="peak peak-b"></div>
-          <svg viewBox="0 0 260 180" role="img">
-            <path class="route-shadow" d="M34 134 C78 94, 78 36, 128 56 S171 124, 224 46" />
-            <path class="route-line" d="M34 134 C78 94, 78 36, 128 56 S171 124, 224 46" />
-            <g class="dots"><circle cx="34" cy="134" r="5" /><circle cx="128" cy="56" r="5" /><circle cx="224" cy="46" r="5" /></g>
-          </svg>
-        </div>
+        <div class="route-art" aria-hidden="true"><div class="sun"></div><div class="peak peak-a"></div><div class="peak peak-b"></div><svg viewBox="0 0 260 180" role="img"><path class="route-shadow" d="M34 134 C78 94, 78 36, 128 56 S171 124, 224 46"/><path class="route-line" d="M34 134 C78 94, 78 36, 128 56 S171 124, 224 46"/><g class="dots"><circle cx="34" cy="134" r="5"/><circle cx="128" cy="56" r="5"/><circle cx="224" cy="46" r="5"/></g></svg></div>
       </section>
-
       <nav class="tabs" aria-label="页面切换">
-        <button class="tab is-active" data-panel="trip" type="button">行程</button>
-        <button class="tab" data-panel="hotels" type="button">酒店</button>
-        <button class="tab" data-panel="food" type="button">美食</button>
-        <button class="tab" data-panel="checklist" type="button">清单</button>
-        <button class="tab" data-panel="tips" type="button">提醒</button>
+        <button class="tab is-active" data-panel="trip" type="button">行程</button><button class="tab" data-panel="hotels" type="button">酒店</button><button class="tab" data-panel="food" type="button">美食</button><button class="tab" data-panel="checklist" type="button">清单</button><button class="tab" data-panel="tips" type="button">提醒</button>
       </nav>
-
       <div id="trip" class="panel is-active">${renderTripPanel(data)}</div>
       <div id="hotels" class="panel">${renderHotelsPanel(data)}</div>
       <div id="food" class="panel">${renderFoodPanel(data)}</div>
       <div id="checklist" class="panel">${renderChecklistPanel(data)}</div>
       <div id="tips" class="panel">${renderTipsPanel(data)}</div>
     `;
-
     bindViewEvents(data);
   }
 
   function renderTripPanel(data) {
     if (!data.tripDays) return "<p>暂无数据</p>";
-    return `
-      <div class="section-heading"><h2>每日路线</h2><p>时间为大致建议，可按实际情况微调。</p></div>
-      <div class="timeline">
-        ${data.tripDays.map((item, idx) => `
-          <article class="day-card">
-            <div class="date-rail"><strong>${item.date}</strong><span>${item.day}</span></div>
-            <div class="day-body">
-              <div class="card-top"><div class="place">${item.location}</div><div class="tag">${item.distance}</div></div>
-              <div class="route-block"><p class="route-line">${item.route}</p><div class="chips">${(item.highlights||[]).map((h) => "<span>"+h+"</span>").join("")}</div></div>
-              <div class="outfit"><span>每日穿搭</span><p>${item.outfit}</p></div>
-              <div class="day-schedule">${(item.schedule||[]).map((s) => '<div class="schedule-row"><time>'+s.time+'</time><p>'+s.plan+'</p></div>').join("")}</div>
-              <div class="trip-tips"><span>小贴士</span><p>${item.bestTime}。${item.note}</p></div>
-              <button class="copy-btn" data-trip-copy="${idx}" type="button">复制路线</button>
-            </div>
-          </article>
-        `).join("")}
-      </div>`;
+    return '<div class="section-heading"><h2>每日路线</h2><p>时间为大致建议，可按实际情况微调。</p></div><div class="timeline">'+data.tripDays.map((item,idx)=>`
+      <article class="day-card">
+        <div class="date-rail"><strong>${item.date}</strong><span>${item.day}</span></div>
+        <div class="day-body">
+          <div class="card-top"><div class="place">${item.location}</div><div class="tag">${item.distance}</div></div>
+          ${item.budget?'<span class="budget-tag">'+item.budget+'</span>':''}
+          <div class="route-block"><p class="route-line">${item.route}</p><div class="chips">${(item.highlights||[]).map((h)=>"<span>"+h+"</span>").join("")}</div></div>
+          <div class="outfit"><span>每日穿搭</span><p>${item.outfit}</p></div>
+          <div class="day-schedule">${(item.schedule||[]).map((s)=>'<div class="schedule-row"><time>'+s.time+'</time><p>'+s.plan+'</p></div>').join("")}</div>
+          <div class="trip-tips"><span>小贴士</span><p>${item.bestTime}。${item.note}</p></div>
+          <button class="copy-btn" data-trip-copy="${idx}" type="button">复制路线</button>
+        </div>
+      </article>`).join("")+'</div>';
   }
 
   function renderHotelsPanel(data) {
     if (!data.hotels) return "<p>暂无数据</p>";
-    return `
-      <div class="section-heading"><h2>每晚落脚点</h2><p>酒店按新开业·高评分·舒适标准筛选，点击复制到地图搜索。</p></div>
-      <div class="list">
-        ${data.hotels.map((h) => `
-          <article class="hotel-card">
-            <div class="hotel-meta"><span>${h.date} · ${h.nights}</span><span>${h.city}</span></div>
-            <h3>${h.name}</h3>
-            <p class="hotel-address">${h.address}</p>
-            <p class="hotel-phone"><a href="tel:${h.phone}">${h.phone}</a></p>
-            <button class="copy-btn" data-copy="${h.name}&#10;地址: ${h.address}&#10;电话: ${h.phone}&#10;日期: ${h.date} · ${h.nights}" type="button">复制酒店</button>
-          </article>
-        `).join("")}
-      </div>`;
+    return '<div class="section-heading"><h2>每晚落脚点</h2><p>每晚 2-3 家酒店选项，按新开业·高评分·舒适标准筛选，附优缺点对比。</p></div><div class="list">'+data.hotels.map((h,hi)=>{
+      const primary = (h.options&&h.options[0])||{};
+      const getCopy = (o)=>o.name+"&#10;地址: "+o.address+"&#10;电话: "+o.phone+"&#10;日期: "+h.date+" · "+h.nights;
+      return `<article class="hotel-card">
+        <div class="hotel-meta"><span>${h.date} · ${h.nights}</span><span>${h.city}</span></div>
+        ${h.options&&h.options.length>1?'<h3>'+h.city+' · '+(h.options.length)+'家可选</h3>':'<h3>'+primary.name+'</h3>'}
+        <p class="hotel-address">${primary.address}</p>
+        <p class="hotel-phone"><a href="tel:${primary.phone}">${primary.phone}</a></p>
+        ${primary.pros?`<div class="ho-procon"><div class="ho-pros"><span>✓ ${(primary.pros||[]).join(' / ')}</span></div><div class="ho-cons"><span>✗ ${(primary.cons||[]).join(' / ')}</span></div></div>`:''}
+        <button class="copy-btn" data-copy="${getCopy(primary)}" type="button">复制首选</button>
+        ${h.options&&h.options.length>1?`
+          <button class="hotel-show-more" data-hotel-idx="${hi}" type="button">查看全部 ${h.options.length} 家酒店对比 →</button>
+          <div class="hotel-options-panel" id="hotelOpts-${hi}">
+            ${h.options.slice(1).map((o,oi)=>{
+              return '<div class="hotel-option"><span class="ho-name">'+(oi+2)+'. '+o.name+'</span><span class="ho-addr">'+o.address+'</span><span class="ho-phone">'+o.phone+'</span><div class="ho-procon"><div class="ho-pros"><span>✓ '+(o.pros||[]).join(' / ')+'</span></div><div class="ho-cons"><span>✗ '+(o.cons||[]).join(' / ')+'</span></div></div><button class="copy-btn" data-copy="'+getCopy(o)+'" type="button">复制此酒店</button></div>';
+            }).join("")}
+          </div>`:''}
+      </article>`;
+    }).join("")+'</div>';
   }
 
   function renderFoodPanel(data) {
     if (!data.foodRecommendations) return "<p>暂无数据</p>";
-    const renderMeal = (title, shops) => `
-      <div class="food-meal"><div class="meal-label">${title}</div>
-        <div class="food-options">
-          ${(shops||[]).map((shop) => {
-            const ct = shop.name + "&#10;地址: " + shop.address + "&#10;推荐: " + shop.dishes + "&#10;人均: " + shop.price;
-            return '<button class="food-option" data-copy="'+ct+'" type="button"><span class="food-option-head"><strong>'+shop.name+'</strong><em>'+shop.price+'</em></span><span class="food-dishes">'+shop.dishes+'</span><span class="food-address">'+shop.address+'</span></button>';
-          }).join("")}
-        </div>
-      </div>`;
+    const renderMeal = (title, shops) => '<div class="food-meal"><div class="meal-label">'+title+'</div><div class="food-options">'+(shops||[]).map((shop)=>{
+      const ct = shop.name+"&#10;地址: "+shop.address+"&#10;推荐: "+shop.dishes+"&#10;人均: "+shop.price;
+      return '<button class="food-option" data-copy="'+ct+'" type="button"><span class="food-option-head"><strong>'+shop.name+'</strong><em>'+shop.price+'</em></span><span class="food-dishes">'+shop.dishes+'</span><span class="food-address">'+shop.address+'</span></button>';
+    }).join("")+'</div></div>';
 
-    return `
-      <div class="section-heading"><h2>每日美食</h2><p>按每天所在城市推荐当地口碑餐厅。</p></div>
-      <div class="list">
-        ${data.foodRecommendations.map((day) => `
-          <article class="food-card">
-            <div class="food-meta"><span>${day.date}</span><span>${day.city}</span></div>
-            ${renderMeal("午饭", day.lunch)}${renderMeal("晚饭", day.dinner)}
-            <div class="food-note">${day.note}</div>
-          </article>
-        `).join("")}
-      </div>`;
+    return '<div class="section-heading"><h2>每日美食</h2><p>按每天所在城市推荐当地口碑餐厅。</p></div><div class="list">'+data.foodRecommendations.map((day)=>`
+      <article class="food-card">
+        <div class="food-meta"><span>${day.date}</span><span>${day.city}</span></div>
+        ${renderMeal("午饭", day.lunch)}${renderMeal("晚饭", day.dinner)}
+        <div class="food-note">${day.note}</div>
+      </article>`).join("")+'</div>';
   }
 
   function renderChecklistPanel(data) {
     if (!data.checklist) return "<p>暂无数据</p>";
     const storeKey = "travel-gen-checklist";
     const checked = JSON.parse(localStorage.getItem(storeKey) || "{}");
-
-    return `
-      <div class="section-heading with-action">
-        <div><h2>出发前清单</h2><p>勾选状态保存在浏览器中。</p></div>
-        <button class="small-action" id="resetGenChecklist" type="button">重置</button>
-      </div>
-      <div id="checklistInner">
-        ${data.checklist.map((group) => `
-          <section class="check-group">
-            <h3>${group.group}</h3>
-            <div class="check-items">
-              ${(group.items||[]).map((label) => {
-                const key = group.group + "-" + label;
-                const cls = checked[key] ? "is-checked" : "";
-                const mark = checked[key] ? "✓" : "";
-                return '<button class="check-item '+cls+'" data-gen-key="'+key.replace(/"/g,"&quot;")+'" type="button"><span class="box">'+mark+'</span><span>'+label+'</span></button>';
-              }).join("")}
-            </div>
-          </section>
-        `).join("")}
-      </div>`;
+    return '<div class="section-heading with-action"><div><h2>出发前清单</h2><p>勾选状态保存在浏览器中。</p></div><button class="small-action" id="resetGenChecklist" type="button">重置</button></div><div id="checklistInner">'+data.checklist.map((group)=>`
+      <section class="check-group"><h3>${group.group}</h3><div class="check-items">${(group.items||[]).map((label)=>{
+        const key = group.group+"-"+label;
+        const cls = checked[key]?"is-checked":"";
+        const mark = checked[key]?"✓":"";
+        return '<button class="check-item '+cls+'" data-gen-key="'+key.replace(/"/g,"&quot;")+'" type="button"><span class="box">'+mark+'</span><span>'+label+'</span></button>';
+      }).join("")}</div></section>`).join("")+'</div>';
   }
 
   function renderTipsPanel(data) {
     if (!data.tips) return "<p>暂无数据</p>";
-    return `
-      <div class="section-heading"><h2>路上提醒</h2><p>把容易被忙碌行程冲掉的小事放在最顺手的位置。</p></div>
-      <div class="list">
-        ${data.tips.map((t) => `
-          <article class="tip-card">
-            <div class="tip-title"><h3>${t.title}</h3><span>${t.tone}</span></div>
-            <p>${t.body}</p>
-          </article>
-        `).join("")}
-      </div>
-      <div class="emergency"><a href="tel:120">拨打 120</a><a href="tel:110">拨打 110</a></div>`;
+    return '<div class="section-heading"><h2>路上提醒</h2><p>把容易被忙碌行程冲掉的小事放在最顺手的位置。</p></div><div class="list">'+data.tips.map((t)=>`
+      <article class="tip-card"><div class="tip-title"><h3>${t.title}</h3><span>${t.tone}</span></div><p>${t.body}</p></article>`).join("")+'</div><div class="emergency"><a href="tel:120">拨打 120</a><a href="tel:110">拨打 110</a></div>';
   }
 
   function bindViewEvents(data) {
-    // toc links
+    // toc
     const tocLinks = document.querySelectorAll(".toc-link");
-    const panels = document.querySelectorAll(".panel, [id].panel");
-    function setActiveToc(id) {
-      tocLinks.forEach((l) => l.classList.remove("is-active"));
-      const link = document.querySelector('.toc-link[href="#'+id+'"]');
-      if (link) link.classList.add("is-active");
-    }
-    tocLinks.forEach((link) => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-        const id = link.getAttribute("href").slice(1);
-        const el = document.getElementById(id);
-        if (el) { el.scrollIntoView({ behavior: "smooth", block: "start" }); setActiveToc(id); }
-        // also switch tab
-        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("is-active"));
-        const tab = document.querySelector('.tab[data-panel="'+id+'"]');
-        if (tab) tab.classList.add("is-active");
-        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("is-active"));
-        if (el) el.classList.add("is-active");
-      });
-    });
+    function setActiveToc(id) { tocLinks.forEach((l)=>l.classList.remove("is-active")); const link = document.querySelector('.toc-link[href="#'+id+'"]'); if(link)link.classList.add("is-active"); }
+    tocLinks.forEach((link)=>{link.addEventListener("click",(e)=>{e.preventDefault();const id=link.getAttribute("href").slice(1);const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});setActiveToc(id);}document.querySelectorAll(".tab").forEach((t)=>t.classList.remove("is-active"));const tab=document.querySelector('.tab[data-panel="'+id+'"]');if(tab)tab.classList.add("is-active");document.querySelectorAll(".panel").forEach((p)=>p.classList.remove("is-active"));if(el)el.classList.add("is-active");});});
 
     // tabs
     const allTabs = document.querySelectorAll(".tab");
-    allTabs.forEach((tab) => {
-      tab.addEventListener("click", () => {
-        allTabs.forEach((t) => t.classList.remove("is-active"));
-        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("is-active"));
-        tab.classList.add("is-active");
-        const id = tab.dataset.panel;
-        const panel = document.getElementById(id);
-        if (panel) { panel.classList.add("is-active"); setActiveToc(id); }
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    });
+    allTabs.forEach((tab)=>{tab.addEventListener("click",()=>{allTabs.forEach((t)=>t.classList.remove("is-active"));document.querySelectorAll(".panel").forEach((p)=>p.classList.remove("is-active"));tab.classList.add("is-active");const id=tab.dataset.panel;const panel=document.getElementById(id);if(panel){panel.classList.add("is-active");setActiveToc(id);}window.scrollTo({top:0,behavior:"smooth"});});});
 
-    // copy & checklist
-    viewContent.addEventListener("click", (e) => {
-      const copyBtn = e.target.closest("[data-copy]");
-      if (copyBtn) {
-        navigator.clipboard.writeText(copyBtn.dataset.copy.replace(/&#10;/g, "\n")).then(() => showToast("已复制")).catch(() => showToast("可长按复制"));
+    // hotel show more
+    viewContent.addEventListener("click",(e)=>{
+      const showMore = e.target.closest(".hotel-show-more");
+      if (showMore) {
+        const idx = showMore.dataset.hotelIdx;
+        const panel = document.getElementById("hotelOpts-"+idx);
+        if (panel) { panel.classList.toggle("is-open"); showMore.textContent = panel.classList.contains("is-open") ? "收起对比 ↑" : "查看全部选项 →"; }
         return;
       }
+
+      const copyBtn = e.target.closest("[data-copy]");
+      if (copyBtn) { navigator.clipboard.writeText(copyBtn.dataset.copy.replace(/&#10;/g,"\n")).then(()=>showToast("已复制")).catch(()=>showToast("可长按复制")); return; }
 
       const tripBtn = e.target.closest("[data-trip-copy]");
-      if (tripBtn && data.tripDays) {
-        const idx = parseInt(tripBtn.dataset.tripCopy);
-        const text = buildTripCopy(data.tripDays[idx]);
-        navigator.clipboard.writeText(text).then(() => showToast("已复制")).catch(() => showToast("可长按复制"));
-        return;
-      }
+      if (tripBtn && data.tripDays) { const idx=parseInt(tripBtn.dataset.tripCopy); const text=buildTripCopy(data.tripDays[idx]); navigator.clipboard.writeText(text).then(()=>showToast("已复制")).catch(()=>showToast("可长按复制")); return; }
 
       const checkBtn = e.target.closest("[data-gen-key]");
-      if (checkBtn) {
-        const storeKey = "travel-gen-checklist";
-        const checked = JSON.parse(localStorage.getItem(storeKey) || "{}");
-        const key = checkBtn.dataset.genKey;
-        checked[key] = !checked[key];
-        localStorage.setItem(storeKey, JSON.stringify(checked));
-        // re-render checklist panel
-        const panel = document.getElementById("checklist");
-        if (panel) panel.innerHTML = renderChecklistPanel(data);
-        return;
-      }
+      if (checkBtn) { const storeKey="travel-gen-checklist"; const checked=JSON.parse(localStorage.getItem(storeKey)||"{}"); const key=checkBtn.dataset.genKey; checked[key]=!checked[key]; localStorage.setItem(storeKey,JSON.stringify(checked)); const panel=document.getElementById("checklist"); if(panel)panel.innerHTML=renderChecklistPanel(data); return; }
     });
 
     // reset checklist
     const resetBtn = document.getElementById("resetGenChecklist");
-    if (resetBtn) {
-      resetBtn.addEventListener("click", () => {
-        localStorage.removeItem("travel-gen-checklist");
-        const panel = document.getElementById("checklist");
-        if (panel) panel.innerHTML = renderChecklistPanel(data);
-        showToast("已重置清单");
-      });
-    }
+    if (resetBtn) { resetBtn.addEventListener("click",()=>{localStorage.removeItem("travel-gen-checklist");const panel=document.getElementById("checklist");if(panel)panel.innerHTML=renderChecklistPanel(data);showToast("已重置清单");}); }
   }
 
   // ── back / export ──
-  backBtn.addEventListener("click", () => {
-    viewMode.classList.remove("is-active");
-    inputMode.style.display = "";
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+  backBtn.addEventListener("click",()=>{viewMode.classList.remove("is-active");inputMode.style.display="";renderHistory();window.scrollTo({top:0,behavior:"smooth"});});
+  exportBtn.addEventListener("click",()=>{if(!travelData)return;const blob=new Blob([JSON.stringify(travelData,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="travel-data.json";a.click();URL.revokeObjectURL(url);showToast("已下载 JSON");});
 
-  exportBtn.addEventListener("click", () => {
-    if (!travelData) return;
-    const blob = new Blob([JSON.stringify(travelData, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "travel-data.json";
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast("已下载 JSON");
-  });
-
-  // ── restore saved data ──
+  // ── restore saved ──
   const saved = localStorage.getItem(storeDataKey);
-  if (saved) {
-    try {
-      travelData = JSON.parse(saved);
-      renderView(travelData);
-      inputMode.style.display = "none";
-      viewMode.classList.add("is-active");
-    } catch(e) { /* ignore corrupt data */ }
-  }
+  if (saved) { try { travelData=JSON.parse(saved); renderView(travelData); inputMode.style.display="none"; viewMode.classList.add("is-active"); } catch(e){} }
 })();
 </script>
 </body>
