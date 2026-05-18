@@ -50,7 +50,11 @@
 
     #viewMode { display: none; }
     #viewMode.is-active { display: block; }
-    .view-toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .view-toolbar { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+    .toc-bar { position: sticky; top: 0; z-index: 5; display: flex; gap: 4px; padding: 8px 16px; margin: 0 auto 16px; max-width: 860px; overflow-x: auto; background: rgba(255,250,242,.88); backdrop-filter: blur(18px); border-bottom: 1px solid rgba(234,219,201,.66); scrollbar-width: none; }
+    .toc-bar::-webkit-scrollbar { display: none; }
+    .toc-link { flex: none; padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; transition: all .2s ease; }
+    .toc-link.is-active, .toc-link:hover { background: var(--teal); color: #fff; box-shadow: 0 6px 16px rgba(20,127,136,.18); }
   </style>
 </head>
 <body>
@@ -69,7 +73,7 @@
         <input type="password" id="apiKeyInput" placeholder="粘贴 DeepSeek API Key（sk-...）" />
         <button class="btn-primary" id="saveKeyBtn" type="button" style="min-height:40px;font-size:14px;padding:0 16px;">保存</button>
       </div>
-      <p class="setup-hint">Key 仅保存在浏览器中。<a href="https://platform.deepseek.com/api_keys" target="_blank">获取 DeepSeek Key →</a> ｜ 价格仅为 Claude 的 1/10</p>
+      <p class="setup-hint">Key 仅保存在浏览器中。<a href="https://platform.deepseek.com/api_keys" target="_blank">获取 DeepSeek Key →</a></p>
     </div>
   </div>
 
@@ -115,6 +119,13 @@
     <button class="btn-secondary" id="backBtn" type="button" style="min-height:38px;font-size:14px;padding:0 16px;">← 重新生成</button>
     <button class="btn-secondary" id="exportBtn" type="button" style="min-height:38px;font-size:14px;padding:0 16px;">导出 JSON</button>
   </div>
+  <nav class="toc-bar" id="tocBar">
+    <a class="toc-link is-active" href="#trip">行程</a>
+    <a class="toc-link" href="#hotels">酒店</a>
+    <a class="toc-link" href="#food">美食</a>
+    <a class="toc-link" href="#checklist">清单</a>
+    <a class="toc-link" href="#tips">提醒</a>
+  </nav>
   <main class="shell" id="viewContent"></main>
 </div>
 
@@ -124,7 +135,7 @@
 (function() {
   // ── state ──
   let travelData = null;
-  let apiKey = localStorage.getItem("travel-gen-key") || "";
+  let apiKey = localStorage.getItem("travel-gen-ds-key") || "";
   const storeDataKey = "travel-gen-data";
 
   // ── dom ──
@@ -178,7 +189,7 @@
     const val = apiKeyInput.value.trim();
     if (!val) return;
     apiKey = val;
-    localStorage.setItem("travel-gen-key", apiKey);
+    localStorage.setItem("travel-gen-ds-key", apiKey);
     updateSetupUI();
     showToast("API Key 已保存");
   });
@@ -382,11 +393,11 @@ ${prefs ? "额外偏好：" + prefs : ""}
         <button class="tab" data-panel="tips" type="button">提醒</button>
       </nav>
 
-      <section class="panel is-active" id="trip">${renderTripPanel(data)}</section>
-      <section class="panel" id="hotels">${renderHotelsPanel(data)}</section>
-      <section class="panel" id="food">${renderFoodPanel(data)}</section>
-      <section class="panel" id="checklist">${renderChecklistPanel(data)}</section>
-      <section class="panel" id="tips">${renderTipsPanel(data)}</section>
+      <div id="trip" class="panel is-active">${renderTripPanel(data)}</div>
+      <div id="hotels" class="panel">${renderHotelsPanel(data)}</div>
+      <div id="food" class="panel">${renderFoodPanel(data)}</div>
+      <div id="checklist" class="panel">${renderChecklistPanel(data)}</div>
+      <div id="tips" class="panel">${renderTipsPanel(data)}</div>
     `;
 
     bindViewEvents(data);
@@ -498,14 +509,39 @@ ${prefs ? "额外偏好：" + prefs : ""}
   }
 
   function bindViewEvents(data) {
-    // tabs
-    document.querySelectorAll(".tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
+    // toc links
+    const tocLinks = document.querySelectorAll(".toc-link");
+    const panels = document.querySelectorAll(".panel, [id].panel");
+    function setActiveToc(id) {
+      tocLinks.forEach((l) => l.classList.remove("is-active"));
+      const link = document.querySelector('.toc-link[href="#'+id+'"]');
+      if (link) link.classList.add("is-active");
+    }
+    tocLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const id = link.getAttribute("href").slice(1);
+        const el = document.getElementById(id);
+        if (el) { el.scrollIntoView({ behavior: "smooth", block: "start" }); setActiveToc(id); }
+        // also switch tab
         document.querySelectorAll(".tab").forEach((t) => t.classList.remove("is-active"));
+        const tab = document.querySelector('.tab[data-panel="'+id+'"]');
+        if (tab) tab.classList.add("is-active");
+        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("is-active"));
+        if (el) el.classList.add("is-active");
+      });
+    });
+
+    // tabs
+    const allTabs = document.querySelectorAll(".tab");
+    allTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        allTabs.forEach((t) => t.classList.remove("is-active"));
         document.querySelectorAll(".panel").forEach((p) => p.classList.remove("is-active"));
         tab.classList.add("is-active");
-        const panel = document.getElementById(tab.dataset.panel);
-        if (panel) panel.classList.add("is-active");
+        const id = tab.dataset.panel;
+        const panel = document.getElementById(id);
+        if (panel) { panel.classList.add("is-active"); setActiveToc(id); }
         window.scrollTo({ top: 0, behavior: "smooth" });
       });
     });
