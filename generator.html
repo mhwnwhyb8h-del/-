@@ -66,10 +66,10 @@
     </button>
     <div class="setup-body">
       <div class="setup-row">
-        <input type="password" id="apiKeyInput" placeholder="粘贴 Anthropic API Key（sk-ant-...）" />
+        <input type="password" id="apiKeyInput" placeholder="粘贴 DeepSeek API Key（sk-...）" />
         <button class="btn-primary" id="saveKeyBtn" type="button" style="min-height:40px;font-size:14px;padding:0 16px;">保存</button>
       </div>
-      <p class="setup-hint">Key 仅保存在浏览器中，不会上传到任何服务器。<a href="https://console.anthropic.com/" target="_blank">获取 Key →</a></p>
+      <p class="setup-hint">Key 仅保存在浏览器中。<a href="https://platform.deepseek.com/api_keys" target="_blank">获取 DeepSeek Key →</a> ｜ 价格仅为 Claude 的 1/10</p>
     </div>
   </div>
 
@@ -220,29 +220,31 @@
     clearInterval(loadingTimer);
   }
 
-  // ── API call ──
-  async function callClaude(systemPrompt, userMessage) {
-    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+  // ── API call (DeepSeek) ──
+  async function callAI(systemPrompt, userMessage) {
+    const resp = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
+        "Authorization": "Bearer " + apiKey
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
+        model: "deepseek-chat",
         max_tokens: 8192,
         temperature: 0.7,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userMessage }]
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage }
+        ]
       })
     });
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({}));
       throw new Error(err.error?.message || `API 请求失败 (${resp.status})`);
     }
-    return resp.json();
+    const data = await resp.json();
+    return data.choices[0].message.content;
   }
 
   function extractJSON(text) {
@@ -259,7 +261,7 @@
     hideError();
 
     if (!apiKey) {
-      showError("请先设置 Anthropic API Key（点击上方 API Key 设置）。获取地址：console.anthropic.com");
+      showError("请先设置 DeepSeek API Key（点击上方 API Key 设置）。获取地址：platform.deepseek.com");
       setupBox.classList.add("is-open");
       setupBox.classList.remove("is-set");
       return;
@@ -320,9 +322,8 @@ ${prefs ? "额外偏好：" + prefs : ""}
 
 请生成旅行随身册数据。`;
 
-      const result = await callClaude(systemPrompt, userMessage);
-      const content = result.content[0].text;
-      const data = extractJSON(content);
+      const content = await callAI(systemPrompt, userMessage);
+      const data = JSON.parse(content);
       travelData = data;
 
       // save
