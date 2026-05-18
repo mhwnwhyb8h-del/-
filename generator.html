@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#8fd2d7" />
+  <title>旅行随身册 · 生成器</title>
+  <link rel="stylesheet" href="./styles.css?v=9" />
+  <style>
+    .gen-page { max-width: 860px; margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 16px 36px; }
+    .gen-hero { padding: 28px; border-radius: 24px; background: linear-gradient(135deg, #bdecef 0%, #8fd2d7 44%, #d9f3ec 72%, #fff2c6 100%); margin-bottom: 20px; }
+    .gen-hero h1 { font-size: clamp(28px, 7vw, 44px); color: #126f7a; margin: 0 0 8px; }
+    .gen-hero p { color: rgba(36,50,65,.72); margin: 0; font-size: 14px; }
+
+    .setup-box { margin-bottom: 18px; border: 1px solid rgba(234,219,201,.86); border-radius: 20px; background: #fffaf0; overflow: hidden; transition: all .25s ease; }
+    .setup-box.is-set { border-color: rgba(53,174,186,.32); background: #eefbfa; }
+    .setup-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border: 0; background: none; cursor: pointer; font: inherit; color: var(--ink); font-size: 15px; font-weight: 600; }
+    .setup-body { display: none; padding: 0 18px 16px; }
+    .setup-box.is-open .setup-body { display: block; }
+    .setup-box.is-set .setup-body { display: none; }
+    .setup-row { display: flex; gap: 8px; }
+    .setup-row input { flex: 1; min-height: 40px; padding: 8px 12px; border: 1px solid rgba(234,219,201,.86); border-radius: 12px; font: inherit; font-size: 13px; background: #fff; outline: none; }
+    .setup-row input:focus { border-color: var(--teal); }
+    .setup-hint { margin-top: 6px; font-size: 12px; color: var(--muted); }
+    .setup-hint a { color: var(--teal); }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    @media (max-width:480px) { .form-grid { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 13px; font-weight: 600; color: #324052; }
+    .field input, .field textarea { min-height: 44px; padding: 10px 14px; border: 1px solid rgba(234,219,201,.86); border-radius: 14px; font: inherit; font-size: 15px; background: #fffaf0; outline: none; resize: vertical; }
+    .field input:focus, .field textarea:focus { border-color: var(--teal); }
+    .field textarea { min-height: 80px; }
+    .field .sublabel { font-size: 11px; color: var(--muted); }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-primary, .btn-secondary { min-height: 48px; padding: 0 28px; border: 0; border-radius: 16px; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: var(--teal); color: #fff; box-shadow: 0 8px 22px rgba(20,127,136,.22); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-secondary { background: transparent; border: 1px solid rgba(53,174,186,.38); color: var(--teal); }
+
+    .loading-box { display: none; text-align: center; padding: 32px; }
+    .loading-box.is-active { display: block; }
+    .spinner { width: 42px; height: 42px; margin: 0 auto 16px; border: 3px solid #e0e8e4; border-top-color: var(--teal); border-radius: 50%; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-box p { color: var(--muted); font-size: 14px; }
+
+    .error-box { display: none; margin-bottom: 16px; padding: 14px 18px; border-radius: 16px; background: #fef0f0; border: 1px solid #fcc; color: #c44; font-size: 14px; }
+    .error-box.is-active { display: block; }
+
+    #viewMode { display: none; }
+    #viewMode.is-active { display: block; }
+    .view-toolbar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+<div id="inputMode" class="gen-page">
+  <div class="gen-hero">
+    <h1>旅行随身册 · 生成器</h1>
+    <p>输入目的地、时间和人数，AI 自动生成完整旅行攻略，酒店按新开业·高评分·高舒适度标准推荐。</p>
+  </div>
+
+  <div class="setup-box is-open" id="setupBox">
+    <button class="setup-toggle" id="setupToggle" type="button">
+      <span>🔑 API Key 设置</span><span id="setupStatus">未设置</span>
+    </button>
+    <div class="setup-body">
+      <div class="setup-row">
+        <input type="password" id="apiKeyInput" placeholder="粘贴 Anthropic API Key（sk-ant-...）" />
+        <button class="btn-primary" id="saveKeyBtn" type="button" style="min-height:40px;font-size:14px;padding:0 16px;">保存</button>
+      </div>
+      <p class="setup-hint">Key 仅保存在浏览器中，不会上传到任何服务器。<a href="https://console.anthropic.com/" target="_blank">获取 Key →</a></p>
+    </div>
+  </div>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <form id="genForm">
+    <div class="form-grid">
+      <div class="field">
+        <label>目的地</label>
+        <input type="text" id="destInput" placeholder="如：云南大理、日本京都…" required />
+      </div>
+      <div class="field">
+        <label>出发日期</label>
+        <input type="date" id="dateInput" required />
+      </div>
+      <div class="field">
+        <label>行程天数</label>
+        <input type="number" id="daysInput" value="7" min="2" max="20" required />
+      </div>
+      <div class="field">
+        <label>出行人数</label>
+        <input type="number" id="peopleInput" value="2" min="1" max="20" required />
+        <span class="sublabel">用于推荐房型和用餐份量</span>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:16px;">
+      <label>额外偏好（选填）</label>
+      <textarea id="prefsInput" placeholder="如：喜欢自然风光、预算中等、不赶路、需要亲子友好…"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="genBtn" type="submit">生成旅行随身册</button>
+    </div>
+  </form>
+
+  <div class="loading-box" id="loadingBox">
+    <div class="spinner"></div>
+    <p id="loadingText">正在规划行程…</p>
+  </div>
+</div>
+
+<div id="viewMode">
+  <div class="view-toolbar shell">
+    <button class="btn-secondary" id="backBtn" type="button" style="min-height:38px;font-size:14px;padding:0 16px;">← 重新生成</button>
+    <button class="btn-secondary" id="exportBtn" type="button" style="min-height:38px;font-size:14px;padding:0 16px;">导出 JSON</button>
+  </div>
+  <main class="shell" id="viewContent"></main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function() {
+  // ── state ──
+  let travelData = null;
+  let apiKey = localStorage.getItem("travel-gen-key") || "";
+  const storeDataKey = "travel-gen-data";
+
+  // ── dom ──
+  const $ = (s) => document.querySelector(s);
+  const inputMode = $("#inputMode");
+  const viewMode = $("#viewMode");
+  const setupBox = $("#setupBox");
+  const setupToggle = $("#setupToggle");
+  const setupStatus = $("#setupStatus");
+  const apiKeyInput = $("#apiKeyInput");
+  const saveKeyBtn = $("#saveKeyBtn");
+  const genForm = $("#genForm");
+  const genBtn = $("#genBtn");
+  const loadingBox = $("#loadingBox");
+  const loadingText = $("#loadingText");
+  const errorBox = $("#errorBox");
+  const destInput = $("#destInput");
+  const dateInput = $("#dateInput");
+  const daysInput = $("#daysInput");
+  const peopleInput = $("#peopleInput");
+  const prefsInput = $("#prefsInput");
+  const backBtn = $("#backBtn");
+  const exportBtn = $("#exportBtn");
+  const viewContent = $("#viewContent");
+  const toast = $("#toast");
+
+  // ── api key ──
+  function updateSetupUI() {
+    if (apiKey) {
+      setupBox.classList.add("is-set");
+      setupBox.classList.remove("is-open");
+      setupStatus.textContent = "已设置 ✓";
+      setupStatus.style.color = "var(--teal)";
+      apiKeyInput.value = apiKey;
+    } else {
+      setupBox.classList.remove("is-set");
+      setupBox.classList.add("is-open");
+      setupStatus.textContent = "未设置";
+      setupStatus.style.color = "";
+    }
+  }
+  updateSetupUI();
+  if (apiKey) apiKeyInput.value = apiKey;
+
+  setupToggle.addEventListener("click", () => {
+    if (setupBox.classList.contains("is-set")) { setupBox.classList.remove("is-set"); setupBox.classList.add("is-open"); }
+    else { setupBox.classList.add("is-open"); }
+  });
+
+  saveKeyBtn.addEventListener("click", () => {
+    const val = apiKeyInput.value.trim();
+    if (!val) return;
+    apiKey = val;
+    localStorage.setItem("travel-gen-key", apiKey);
+    updateSetupUI();
+    showToast("API Key 已保存");
+  });
+
+  // ── toast ──
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.remove("show"), 1600);
+  }
+
+  // ── error ──
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.classList.add("is-active");
+  }
+  function hideError() { errorBox.classList.remove("is-active"); }
+
+  // ── loading ──
+  const loadingMessages = [
+    "正在分析目的地…", "正在规划每日路线…", "正在筛选酒店…", "正在搜索美食…", "正在整理清单…", "即将完成…"
+  ];
+  let loadingIdx = 0;
+  let loadingTimer = null;
+  function startLoading() {
+    loadingBox.classList.add("is-active");
+    genBtn.disabled = true;
+    loadingIdx = 0;
+    loadingText.textContent = loadingMessages[0];
+    loadingTimer = setInterval(() => {
+      loadingIdx = (loadingIdx + 1) % loadingMessages.length;
+      loadingText.textContent = loadingMessages[loadingIdx];
+    }, 3500);
+  }
+  function stopLoading() {
+    loadingBox.classList.remove("is-active");
+    genBtn.disabled = false;
+    clearInterval(loadingTimer);
+  }
+
+  // ── API call ──
+  async function callClaude(systemPrompt, userMessage) {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6-20250514",
+        max_tokens: 8192,
+        temperature: 0.7,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userMessage }]
+      })
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API 请求失败 (${resp.status})`);
+    }
+    return resp.json();
+  }
+
+  function extractJSON(text) {
+    const clean = text.replace(/```(?:json)?\s*/g, "").trim();
+    const start = clean.indexOf("{");
+    const end = clean.lastIndexOf("}");
+    if (start === -1 || end === -1) throw new Error("响应中未找到 JSON");
+    return JSON.parse(clean.slice(start, end + 1));
+  }
+
+  // ── generate ──
+  genForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    hideError();
+
+    if (!apiKey) {
+      showError("请先设置 Anthropic API Key（点击上方 API Key 设置）。获取地址：console.anthropic.com");
+      setupBox.classList.add("is-open");
+      setupBox.classList.remove("is-set");
+      return;
+    }
+
+    const dest = destInput.value.trim();
+    const startDate = dateInput.value;
+    const days = parseInt(daysInput.value);
+    const people = parseInt(peopleInput.value);
+    const prefs = prefsInput.value.trim();
+
+    if (!dest || !startDate || !days) { showError("请填写目的地、日期和天数"); return; }
+
+    // compute end date
+    const start = new Date(startDate);
+    const end = new Date(start);
+    end.setDate(end.getDate() + days - 1);
+    const endStr = `${end.getMonth()+1}月${end.getDate()}日`;
+    const startStr = `${start.getMonth()+1}月${start.getDate()}日`;
+
+    startLoading();
+
+    try {
+      const systemPrompt = `你是一位资深旅行规划专家。根据用户输入的目的地、日期、人数和偏好，生成一份完整详细的旅行随身册数据。
+
+你必须返回纯 JSON（不要包裹在 markdown 代码块中），格式如下：
+{
+  "tripDays": [
+    { "day": "抵达日", "date": "X月X日", "route": "简短路线描述", "location": "当晚住宿城市", "distance": "车程描述如约300km/4h或城市转场或环线游玩", "highlights": ["亮点1","亮点2"], "bestTime": "最佳观赏时间和光线建议", "outfit": "每日穿搭建议（含颜色搭配推荐，150字以内）", "schedule": [{"time":"08:00-09:00","plan":"具体安排"}], "note": "当天特别提醒" }
+  ],
+  "hotels": [
+    { "date": "X月X日", "city": "城市", "name": "酒店全名", "address": "详细地址", "phone": "电话", "nights": "X晚" }
+  ],
+  "foodRecommendations": [
+    { "date": "X月X日", "city": "城市", "note": "当天餐饮说明", "lunch": [{"name":"餐厅名","address":"详细地址","dishes":"推荐菜","price":"约XX-XX元/人"}], "dinner": [{"name":"餐厅名","address":"详细地址","dishes":"推荐菜","price":"约XX-XX元/人"}] }
+  ],
+  "checklist": [
+    { "group": "分组名如证件与支付", "items": ["物品1","物品2"] }
+  ],
+  "tips": [
+    { "title": "标题", "body": "具体提醒内容", "tone": "标签如气候/安全/礼仪/通讯" }
+  ]
+}
+
+重要要求：
+1. tripDays 按日期顺序，从抵达日到最后一天。schedule 每天 4 个时间段。
+2. 酒店筛选标准极为重要：优先推荐 2024-2025 年新开业或新装修的酒店；评分 ≥ 4.5（满分5）；差评率低于 5%；舒适型及以上（四星级标准或精品民宿）。每处酒店必须包含详细的地址和电话。
+3. 美食推荐要包含当地真正的特色餐厅，地址尽量具体，避免"景区周边"这种模糊描述。
+4. checklist 分 5-6 组，每组 3-8 项。
+5. tips 需要 6-8 条，贴合目的地实际情况。
+6. 所有内容用中文，日期格式为"X月X日"。
+7. 路线安排要合理，景点之间的距离和游玩时间要科学。`;
+
+      const userMessage = `目的地：${dest}
+出发日期：${startStr}，共 ${days} 天（${startStr} - ${endStr}）
+出行人数：${people} 人
+${prefs ? "额外偏好：" + prefs : ""}
+
+请生成旅行随身册数据。`;
+
+      const result = await callClaude(systemPrompt, userMessage);
+      const content = result.content[0].text;
+      const data = extractJSON(content);
+      travelData = data;
+
+      // save
+      localStorage.setItem(storeDataKey, JSON.stringify(data));
+      // render
+      renderView(data);
+      stopLoading();
+      inputMode.style.display = "none";
+      viewMode.classList.add("is-active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      stopLoading();
+      showError("生成失败：" + err.message);
+      console.error(err);
+    }
+  });
+
+  // ── render functions (adapted from script.js) ──
+  function buildTripCopy(item) {
+    const header = ["路线: " + item.route, "住宿: " + item.location, "日期: " + item.date, ""];
+    const schedule = item.schedule.map((s) => s.time + "  " + s.plan);
+    const footer = ["", "备注: " + item.note];
+    return [...header, ...schedule, ...footer].join("\n");
+  }
+
+  function renderView(data) {
+    viewContent.innerHTML = `
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">PRIVATE TOUR · ${peopleInput.value}人同行</p>
+          <h1>${destInput.value.trim()}旅行随身册</h1>
+          <p class="hero-text">${dateInput.value ? (() => { const s = new Date(dateInput.value); return (s.getMonth()+1)+"月"+(s.getDate())+"日"; })() : ""} 到 ${(() => { const s = new Date(dateInput.value); if (!dateInput.value) return ""; const e = new Date(s); e.setDate(e.getDate() + parseInt(daysInput.value) - 1); return (e.getMonth()+1)+"月"+(e.getDate())+"日"; })()}，共 ${daysInput.value} 天。</p>
+          <div class="hero-stats">
+            <span>${data.tripDays[0]?.location || ""} 出发</span>
+            <span>${data.hotels.length} 晚酒店</span>
+            <span>${peopleInput.value} 人出行</span>
+          </div>
+        </div>
+        <div class="route-art" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="peak peak-a"></div>
+          <div class="peak peak-b"></div>
+          <svg viewBox="0 0 260 180" role="img">
+            <path class="route-shadow" d="M34 134 C78 94, 78 36, 128 56 S171 124, 224 46" />
+            <path class="route-line" d="M34 134 C78 94, 78 36, 128 56 S171 124, 224 46" />
+            <g class="dots"><circle cx="34" cy="134" r="5" /><circle cx="128" cy="56" r="5" /><circle cx="224" cy="46" r="5" /></g>
+          </svg>
+        </div>
+      </section>
+
+      <nav class="tabs" aria-label="页面切换">
+        <button class="tab is-active" data-panel="trip" type="button">行程</button>
+        <button class="tab" data-panel="hotels" type="button">酒店</button>
+        <button class="tab" data-panel="food" type="button">美食</button>
+        <button class="tab" data-panel="checklist" type="button">清单</button>
+        <button class="tab" data-panel="tips" type="button">提醒</button>
+      </nav>
+
+      <section class="panel is-active" id="trip">${renderTripPanel(data)}</section>
+      <section class="panel" id="hotels">${renderHotelsPanel(data)}</section>
+      <section class="panel" id="food">${renderFoodPanel(data)}</section>
+      <section class="panel" id="checklist">${renderChecklistPanel(data)}</section>
+      <section class="panel" id="tips">${renderTipsPanel(data)}</section>
+    `;
+
+    bindViewEvents(data);
+  }
+
+  function renderTripPanel(data) {
+    if (!data.tripDays) return "<p>暂无数据</p>";
+    return `
+      <div class="section-heading"><h2>每日路线</h2><p>时间为大致建议，可按实际情况微调。</p></div>
+      <div class="timeline">
+        ${data.tripDays.map((item, idx) => `
+          <article class="day-card">
+            <div class="date-rail"><strong>${item.date}</strong><span>${item.day}</span></div>
+            <div class="day-body">
+              <div class="card-top"><div class="place">${item.location}</div><div class="tag">${item.distance}</div></div>
+              <div class="route-block"><p class="route-line">${item.route}</p><div class="chips">${(item.highlights||[]).map((h) => "<span>"+h+"</span>").join("")}</div></div>
+              <div class="outfit"><span>每日穿搭</span><p>${item.outfit}</p></div>
+              <div class="day-schedule">${(item.schedule||[]).map((s) => '<div class="schedule-row"><time>'+s.time+'</time><p>'+s.plan+'</p></div>').join("")}</div>
+              <div class="trip-tips"><span>小贴士</span><p>${item.bestTime}。${item.note}</p></div>
+              <button class="copy-btn" data-trip-copy="${idx}" type="button">复制路线</button>
+            </div>
+          </article>
+        `).join("")}
+      </div>`;
+  }
+
+  function renderHotelsPanel(data) {
+    if (!data.hotels) return "<p>暂无数据</p>";
+    return `
+      <div class="section-heading"><h2>每晚落脚点</h2><p>酒店按新开业·高评分·舒适标准筛选，点击复制到地图搜索。</p></div>
+      <div class="list">
+        ${data.hotels.map((h) => `
+          <article class="hotel-card">
+            <div class="hotel-meta"><span>${h.date} · ${h.nights}</span><span>${h.city}</span></div>
+            <h3>${h.name}</h3>
+            <p class="hotel-address">${h.address}</p>
+            <p class="hotel-phone"><a href="tel:${h.phone}">${h.phone}</a></p>
+            <button class="copy-btn" data-copy="${h.name}&#10;地址: ${h.address}&#10;电话: ${h.phone}&#10;日期: ${h.date} · ${h.nights}" type="button">复制酒店</button>
+          </article>
+        `).join("")}
+      </div>`;
+  }
+
+  function renderFoodPanel(data) {
+    if (!data.foodRecommendations) return "<p>暂无数据</p>";
+    const renderMeal = (title, shops) => `
+      <div class="food-meal"><div class="meal-label">${title}</div>
+        <div class="food-options">
+          ${(shops||[]).map((shop) => {
+            const ct = shop.name + "&#10;地址: " + shop.address + "&#10;推荐: " + shop.dishes + "&#10;人均: " + shop.price;
+            return '<button class="food-option" data-copy="'+ct+'" type="button"><span class="food-option-head"><strong>'+shop.name+'</strong><em>'+shop.price+'</em></span><span class="food-dishes">'+shop.dishes+'</span><span class="food-address">'+shop.address+'</span></button>';
+          }).join("")}
+        </div>
+      </div>`;
+
+    return `
+      <div class="section-heading"><h2>每日美食</h2><p>按每天所在城市推荐当地口碑餐厅。</p></div>
+      <div class="list">
+        ${data.foodRecommendations.map((day) => `
+          <article class="food-card">
+            <div class="food-meta"><span>${day.date}</span><span>${day.city}</span></div>
+            ${renderMeal("午饭", day.lunch)}${renderMeal("晚饭", day.dinner)}
+            <div class="food-note">${day.note}</div>
+          </article>
+        `).join("")}
+      </div>`;
+  }
+
+  function renderChecklistPanel(data) {
+    if (!data.checklist) return "<p>暂无数据</p>";
+    const storeKey = "travel-gen-checklist";
+    const checked = JSON.parse(localStorage.getItem(storeKey) || "{}");
+
+    return `
+      <div class="section-heading with-action">
+        <div><h2>出发前清单</h2><p>勾选状态保存在浏览器中。</p></div>
+        <button class="small-action" id="resetGenChecklist" type="button">重置</button>
+      </div>
+      <div id="checklistInner">
+        ${data.checklist.map((group) => `
+          <section class="check-group">
+            <h3>${group.group}</h3>
+            <div class="check-items">
+              ${(group.items||[]).map((label) => {
+                const key = group.group + "-" + label;
+                const cls = checked[key] ? "is-checked" : "";
+                const mark = checked[key] ? "✓" : "";
+                return '<button class="check-item '+cls+'" data-gen-key="'+key.replace(/"/g,"&quot;")+'" type="button"><span class="box">'+mark+'</span><span>'+label+'</span></button>';
+              }).join("")}
+            </div>
+          </section>
+        `).join("")}
+      </div>`;
+  }
+
+  function renderTipsPanel(data) {
+    if (!data.tips) return "<p>暂无数据</p>";
+    return `
+      <div class="section-heading"><h2>路上提醒</h2><p>把容易被忙碌行程冲掉的小事放在最顺手的位置。</p></div>
+      <div class="list">
+        ${data.tips.map((t) => `
+          <article class="tip-card">
+            <div class="tip-title"><h3>${t.title}</h3><span>${t.tone}</span></div>
+            <p>${t.body}</p>
+          </article>
+        `).join("")}
+      </div>
+      <div class="emergency"><a href="tel:120">拨打 120</a><a href="tel:110">拨打 110</a></div>`;
+  }
+
+  function bindViewEvents(data) {
+    // tabs
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("is-active"));
+        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("is-active"));
+        tab.classList.add("is-active");
+        const panel = document.getElementById(tab.dataset.panel);
+        if (panel) panel.classList.add("is-active");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+
+    // copy & checklist
+    viewContent.addEventListener("click", (e) => {
+      const copyBtn = e.target.closest("[data-copy]");
+      if (copyBtn) {
+        navigator.clipboard.writeText(copyBtn.dataset.copy.replace(/&#10;/g, "\n")).then(() => showToast("已复制")).catch(() => showToast("可长按复制"));
+        return;
+      }
+
+      const tripBtn = e.target.closest("[data-trip-copy]");
+      if (tripBtn && data.tripDays) {
+        const idx = parseInt(tripBtn.dataset.tripCopy);
+        const text = buildTripCopy(data.tripDays[idx]);
+        navigator.clipboard.writeText(text).then(() => showToast("已复制")).catch(() => showToast("可长按复制"));
+        return;
+      }
+
+      const checkBtn = e.target.closest("[data-gen-key]");
+      if (checkBtn) {
+        const storeKey = "travel-gen-checklist";
+        const checked = JSON.parse(localStorage.getItem(storeKey) || "{}");
+        const key = checkBtn.dataset.genKey;
+        checked[key] = !checked[key];
+        localStorage.setItem(storeKey, JSON.stringify(checked));
+        // re-render checklist panel
+        const panel = document.getElementById("checklist");
+        if (panel) panel.innerHTML = renderChecklistPanel(data);
+        return;
+      }
+    });
+
+    // reset checklist
+    const resetBtn = document.getElementById("resetGenChecklist");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        localStorage.removeItem("travel-gen-checklist");
+        const panel = document.getElementById("checklist");
+        if (panel) panel.innerHTML = renderChecklistPanel(data);
+        showToast("已重置清单");
+      });
+    }
+  }
+
+  // ── back / export ──
+  backBtn.addEventListener("click", () => {
+    viewMode.classList.remove("is-active");
+    inputMode.style.display = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  exportBtn.addEventListener("click", () => {
+    if (!travelData) return;
+    const blob = new Blob([JSON.stringify(travelData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "travel-data.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("已下载 JSON");
+  });
+
+  // ── restore saved data ──
+  const saved = localStorage.getItem(storeDataKey);
+  if (saved) {
+    try {
+      travelData = JSON.parse(saved);
+      renderView(travelData);
+      inputMode.style.display = "none";
+      viewMode.classList.add("is-active");
+    } catch(e) { /* ignore corrupt data */ }
+  }
+})();
+</script>
+</body>
+</html>
